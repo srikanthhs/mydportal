@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#1a73e8" />
 <title>Mayiladuthurai District Portal</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
@@ -775,6 +776,890 @@ hr.div{border:none;border-top:1px solid var(--outline-variant);margin:16px 0}
 <!-- ============ MODAL/SNACKBAR ROOTS ============ -->
 <div id="modalRoot"></div>
 <div id="snackbarRoot"></div>
+
+
+<!-- ============ APP SCRIPT ============ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
+  onSnapshot, serverTimestamp, query, orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDA6m25HHvpe450i3OVvQ41zagT4tDZ1Ng",
+  authDomain: "mydportal.firebaseapp.com",
+  projectId: "mydportal",
+  storageBucket: "mydportal.firebasestorage.app",
+  messagingSenderId: "564170700262",
+  appId: "1:564170700262:web:4028aef83d08066b329227"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const S = {
+  user: null, view: 'dashboard',
+  data: { doFiles:[], specialFiles:[], pressAtr:[], meetings:[], departments:[], tags:[] },
+  unsubs: [], calMonth: new Date()
+};
+
+const DEFAULT_DEPTS = [
+  "Agriculture","Animal Husbandry","Adi Dravidar Welfare","Backward Classes Welfare",
+  "Commercial Taxes","Co-operation","District Planning","Education","Electricity (TANGEDCO)",
+  "Employment","Fisheries","Food & Civil Supplies","Forest","Health","Highways",
+  "Housing","Industries","Labour","Land Acquisition","Municipal Administration",
+  "Panchayat","Police","Public Works","Railways","Revenue","Rural Development",
+  "School Education","Social Welfare","Soil Conservation","Sericulture","Statistics",
+  "Tourism","Transport","Water Resources","Women & Child Development"
+];
+const TAG_COLORS = [
+  {bg:'#e8f0fe',fg:'#1a73e8',label:'Blue'},{bg:'#e6f4ea',fg:'#188038',label:'Green'},
+  {bg:'#fce8e6',fg:'#d93025',label:'Red'},{bg:'#fef7e0',fg:'#a56500',label:'Yellow'},
+  {bg:'#f3e8fd',fg:'#7627bb',label:'Purple'},{bg:'#fff3e0',fg:'#e65100',label:'Orange'},
+  {bg:'#f1f3f4',fg:'#5f6368',label:'Grey'}
+];
+
+const $ = id => document.getElementById(id);
+const fmt = ts => { if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); };
+const fmtDt = ts => { if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); };
+const today = () => new Date().toISOString().slice(0,10);
+const daysLeft = ds => { if(!ds) return null; return Math.ceil((new Date(ds)-new Date(today()))/86400000); };
+const escHtml = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+const snack = (msg,type='success') => {
+  const el=document.createElement('div');
+  el.style.cssText=`position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:${type==='error'?'#d93025':type==='warn'?'#f9ab00':'#202124'};color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;transition:transform .3s;box-shadow:0 4px 12px rgba(0,0,0,.3);white-space:nowrap`;
+  el.textContent=msg; $('snackbarRoot').appendChild(el);
+  requestAnimationFrame(()=>{ el.style.transform='translateX(-50%) translateY(0)'; });
+  setTimeout(()=>{ el.style.transform='translateX(-50%) translateY(60px)'; setTimeout(()=>el.remove(),300); },3000);
+};
+const setSyncState = s => {
+  const el=$('syncIndicator'); if(!el) return;
+  el.className='sync-indicator'+(s==='syncing'?' syncing':s==='offline'?' offline':'');
+  el.innerHTML=`<span class="dot"></span><span>${s==='syncing'?'Syncing…':s==='offline'?'Offline':'Synced'}</span>`;
+};
+const priorityChip = p => { const cls={urgent:'priority-urgent',high:'priority-high',normal:'priority-normal',low:'priority-low'}; return `<span class="chip ${cls[p]||'chip-neutral'}">${p||'normal'}</span>`; };
+const statusChip = s => { const map={open:'chip-primary',pending:'chip-warning',closed:'chip-neutral',completed:'chip-success',overdue:'chip-error',replied:'chip-success','in-progress':'chip-warning'}; return `<span class="chip ${map[s]||'chip-neutral'}">${s||''}</span>`; };
+const tagBadges = ids => (ids||[]).map(id=>{ const t=S.data.tags.find(x=>x.id===id); return t?`<span class="tag-chip" style="background:${t.bg};color:${t.fg}">${escHtml(t.name)}</span>`:''; }).join(' ');
+
+function openModal(html, onClose) {
+  const bd=document.createElement('div'); bd.className='modal-backdrop'; bd.innerHTML=html;
+  $('modalRoot').appendChild(bd);
+  bd.addEventListener('click',e=>{ if(e.target===bd){ bd.remove(); onClose&&onClose(); } });
+  return bd;
+}
+function closeModal() { const m=$('modalRoot').lastChild; if(m) m.remove(); }
+
+// LOGIN
+function initLogin() {
+  const ds=$('loginDept');
+  DEFAULT_DEPTS.forEach(d=>{ const o=document.createElement('option'); o.value=o.textContent=d; ds.appendChild(o); });
+  $('loginScreen').classList.remove('hidden'); $('bootLoader').classList.add('hide');
+}
+function doLogin() {
+  const name=$('loginName').value.trim(), role=$('loginRole').value, dept=$('loginDept').value;
+  if(!name){ snack('Please enter your name','warn'); return; }
+  S.user={name,role,dept}; localStorage.setItem('portalUser',JSON.stringify(S.user));
+  $('loginScreen').classList.add('hidden'); bootApp();
+}
+
+// BOOT
+function boot() {
+  const saved=localStorage.getItem('portalUser');
+  if(saved){ try{ S.user=JSON.parse(saved); }catch(e){} }
+  if(S.user) bootApp(); else initLogin();
+}
+
+async function bootApp() {
+  $('bootStatus').textContent='Loading data…';
+  ['appBar','sidebar','main','fab'].forEach(id=>$(id).classList.remove('hidden'));
+  $('userName').textContent=S.user.name; $('userAvatar').textContent=S.user.name.charAt(0).toUpperCase();
+  // Populate dept select
+  const ds=$('loginDept');
+  if(ds&&ds.options.length<=1) DEFAULT_DEPTS.forEach(d=>{ const o=document.createElement('option'); o.value=o.textContent=d; ds.appendChild(o); });
+  subscribeAll();
+}
+
+function subscribeAll() {
+  const cols=[['doFiles','createdAt'],['specialFiles','createdAt'],['pressAtr','createdAt'],['meetings','date'],['departments','name'],['tags','name']];
+  cols.forEach(([col,ord])=>{
+    const q2=query(collection(db,col),orderBy(ord,'desc'));
+    const unsub=onSnapshot(q2,snap=>{ S.data[col]=snap.docs.map(d=>({id:d.id,...d.data()})); setSyncState('synced'); updateBadges(); if(S.view) renderView(S.view); },err=>{ console.error(col,err); setSyncState('offline'); });
+    S.unsubs.push(unsub);
+  });
+  setTimeout(async()=>{ if(S.data.departments.length===0) await seedDepartments(); $('bootLoader').classList.add('hide'); navigate('dashboard'); },1800);
+}
+
+async function seedDepartments() {
+  for(const name of DEFAULT_DEPTS) await addDoc(collection(db,'departments'),{name,category:'General',createdAt:serverTimestamp()});
+}
+
+function updateBadges() {
+  const set=(id,n)=>{ const el=$(id); if(el) el.textContent=n; };
+  set('badge-do', S.data.doFiles.filter(f=>f.status!=='closed').length);
+  set('badge-special', S.data.specialFiles.filter(f=>f.status!=='closed').length);
+  set('badge-press', S.data.pressAtr.filter(f=>f.status!=='replied').length);
+  set('badge-meet', S.data.meetings.filter(m=>m.date>=today()).length);
+  set('badge-pending', getPendingDepts().length);
+}
+
+function getPendingDepts() {
+  const todayStr=today();
+  const filed=new Set(S.data.doFiles.filter(f=>f.dateIssued===todayStr||(f.createdAt&&new Date(f.createdAt.seconds*1000).toISOString().slice(0,10)===todayStr)).map(f=>f.department).filter(Boolean));
+  return S.data.departments.map(d=>d.name).filter(d=>!filed.has(d));
+}
+
+function navigate(view) {
+  S.view=view;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.param===view));
+  const fabLabels={'do-files':'New DO File','special-files':'New File','press-atr':'New Press ATR','meetings':'New Meeting','departments':'New Department','tags':'New Tag'};
+  const fab=$('fab'),lbl=fab.querySelector('.btn-label');
+  if(fabLabels[view]){ fab.style.display=''; lbl.textContent=fabLabels[view]; } else { fab.style.display='none'; }
+  renderView(view);
+  if(window.innerWidth<900) closeSidebar();
+}
+
+function renderView(view) {
+  const main=$('main');
+  switch(view){
+    case 'dashboard':    main.innerHTML=renderDashboard(); postRenderCharts(); break;
+    case 'daily-report': main.innerHTML=renderDailyReport(); break;
+    case 'do-files':     main.innerHTML=renderDoFiles(); break;
+    case 'special-files':main.innerHTML=renderSpecialFiles(); break;
+    case 'press-atr':    main.innerHTML=renderPressAtr(); break;
+    case 'calendar':     main.innerHTML=renderCalendar(); break;
+    case 'meetings':     main.innerHTML=renderMeetings(); break;
+    case 'dept-wise':    main.innerHTML=renderDeptWise(); break;
+    case 'date-wise':    main.innerHTML=renderDateWise(); break;
+    case 'pending':      main.innerHTML=renderPending(); break;
+    case 'departments':  main.innerHTML=renderDepartments(); break;
+    case 'tags':         main.innerHTML=renderTags(); break;
+    default: main.innerHTML='<div class="empty-state"><p>View not found</p></div>';
+  }
+}
+
+// DASHBOARD
+function renderDashboard() {
+  const doOpen=S.data.doFiles.filter(f=>f.status!=='closed').length;
+  const doTotal=S.data.doFiles.length;
+  const spOpen=S.data.specialFiles.filter(f=>f.status!=='closed').length;
+  const prPend=S.data.pressAtr.filter(f=>f.status!=='replied').length;
+  const meetUp=S.data.meetings.filter(m=>m.date>=today()).length;
+  const overdue=S.data.doFiles.filter(f=>f.dueDate&&f.dueDate<today()&&f.status!=='closed').length;
+  const pending=getPendingDepts().length;
+  const recent=[...S.data.doFiles,...S.data.specialFiles,...S.data.pressAtr].filter(f=>f.createdAt).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)).slice(0,8);
+  return `
+  <div class="page-header"><div>
+    <div class="page-title">Dashboard</div>
+    <div class="page-subtitle">Welcome, ${escHtml(S.user.name)} · ${S.user.role} · ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+  </div></div>
+  <div class="kpi-grid">
+    <div class="kpi-card" onclick="navigate('do-files')"><div class="kpi-label">Open DO Files</div><div class="kpi-value">${doOpen}</div><div class="kpi-hint">of ${doTotal} total</div></div>
+    <div class="kpi-card ${overdue>0?'error':'success'}" onclick="navigate('do-files')"><div class="kpi-label">Overdue Files</div><div class="kpi-value">${overdue}</div><div class="kpi-hint">Past due date</div></div>
+    <div class="kpi-card warning" onclick="navigate('special-files')"><div class="kpi-label">Special Files Open</div><div class="kpi-value">${spOpen}</div><div class="kpi-hint">Awaiting action</div></div>
+    <div class="kpi-card" onclick="navigate('press-atr')"><div class="kpi-label">Press ATR Pending</div><div class="kpi-value">${prPend}</div><div class="kpi-hint">Awaiting reply</div></div>
+    <div class="kpi-card" onclick="navigate('meetings')"><div class="kpi-label">Upcoming Meetings</div><div class="kpi-value">${meetUp}</div><div class="kpi-hint">Scheduled</div></div>
+    <div class="kpi-card ${pending>0?'error':'success'}" onclick="navigate('pending')"><div class="kpi-label">Pending Depts Today</div><div class="kpi-value">${pending}</div><div class="kpi-hint">No DO filed today</div></div>
+  </div>
+  <div class="chart-row">
+    <div class="chart-card"><h3>DO Files by Department (Top 8)</h3><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
+    <div class="chart-card"><h3>File Status Overview</h3><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div>
+  </div>
+  <div class="card"><div class="card-title"><span class="material-icons-outlined">history</span>Recent Activity</div>
+    ${recent.length===0?'<div class="empty-state"><p>No records yet</p></div>':recent.map(f=>`
+    <div class="activity-item">
+      <div class="activity-icon"><span class="material-icons-outlined">description</span></div>
+      <div class="activity-body"><div class="a-title">${escHtml(f.subject||f.title||f.headline||'—')}</div>
+      <div class="a-meta">${escHtml(f.department||'')} · ${fmtDt(f.createdAt)}</div></div>
+      ${statusChip(f.status)}
+    </div>`).join('')}
+  </div>`;
+}
+
+function postRenderCharts() {
+  const deptCount={};
+  S.data.doFiles.forEach(f=>{ if(f.department) deptCount[f.department]=(deptCount[f.department]||0)+1; });
+  const topDepts=Object.entries(deptCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const c1=$('chartDept');
+  if(c1&&topDepts.length) new Chart(c1,{type:'bar',data:{labels:topDepts.map(x=>x[0].length>14?x[0].slice(0,12)+'…':x[0]),datasets:[{label:'DO Files',data:topDepts.map(x=>x[1]),backgroundColor:'#1a73e8',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+  const all=[...S.data.doFiles,...S.data.specialFiles,...S.data.pressAtr];
+  const statCount={};
+  all.forEach(f=>{ const s=f.status||'open'; statCount[s]=(statCount[s]||0)+1; });
+  const c2=$('chartStatus');
+  if(c2&&Object.keys(statCount).length) new Chart(c2,{type:'doughnut',data:{labels:Object.keys(statCount),datasets:[{data:Object.values(statCount),backgroundColor:['#1a73e8','#188038','#f9ab00','#d93025','#9c27b0','#5f6368']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+}
+
+// DAILY REPORT
+function renderDailyReport() {
+  const ts=today();
+  const todayDO=S.data.doFiles.filter(f=>f.dateIssued===ts||(f.createdAt&&new Date(f.createdAt.seconds*1000).toISOString().slice(0,10)===ts));
+  const todayMeets=S.data.meetings.filter(m=>m.date===ts);
+  const todayPress=S.data.pressAtr.filter(f=>f.dateReceived===ts);
+  const overdue=S.data.doFiles.filter(f=>f.dueDate&&f.dueDate<ts&&f.status!=='closed');
+  return `
+  <div class="page-header"><div><div class="page-title">Daily Report</div>
+    <div class="page-subtitle">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+  </div><div class="page-actions"><button class="btn btn-outlined" onclick="window.print()"><span class="material-icons-outlined">print</span> Print</button></div></div>
+  <div class="report-header"><h2>Daily Status Report — Mayiladuthurai District</h2><p>Office of the District Collector · Generated on ${new Date().toLocaleString('en-IN')}</p></div>
+  <div class="report-section"><h3>Today's Daily Orders (${todayDO.length})</h3>
+    ${todayDO.length===0?'<p class="text-muted">No Daily Orders issued today</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Priority</th><th>Due Date</th><th>Status</th></tr></thead><tbody>
+    ${todayDO.map(f=>`<tr><td>${escHtml(f.doNumber||'—')}</td><td>${escHtml(f.subject||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${priorityChip(f.priority)}</td><td>${f.dueDate||'—'}</td><td>${statusChip(f.status)}</td></tr>`).join('')}</tbody></table></div>`}
+  </div>
+  <div class="report-section"><h3>Today's Meetings (${todayMeets.length})</h3>
+    ${todayMeets.length===0?'<p class="text-muted">No meetings today</p>':todayMeets.map(m=>`<div class="meeting-card"><h4>${escHtml(m.title||'—')}</h4><div class="m-meta">${m.time||''} · ${escHtml(m.venue||'')}</div></div>`).join('')}
+  </div>
+  <div class="report-section"><h3>Overdue Files (${overdue.length})</h3>
+    ${overdue.length===0?'<p class="text-muted" style="color:var(--success)">✓ No overdue files</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Due Date</th><th>Days Overdue</th></tr></thead><tbody>
+    ${overdue.map(f=>`<tr><td>${escHtml(f.doNumber||'—')}</td><td>${escHtml(f.subject||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${f.dueDate}</td><td><span class="chip chip-error">${Math.abs(daysLeft(f.dueDate))} days</span></td></tr>`).join('')}</tbody></table></div>`}
+  </div>
+  <div class="report-section"><h3>Press ATR Received Today (${todayPress.length})</h3>
+    ${todayPress.length===0?'<p class="text-muted">None today</p>':todayPress.map(p=>`<div class="activity-item"><div class="activity-body"><div class="a-title">${escHtml(p.headline||'—')}</div><div class="a-meta">${escHtml(p.source||'')} · ${escHtml(p.department||'')}</div></div>${statusChip(p.status)}</div>`).join('')}
+  </div>`;
+}
+
+// DO FILES
+let doSearch='',doStatus='all',doPriority='all',doDept='all';
+function renderDoFiles() {
+  let files=S.data.doFiles;
+  if(doSearch) files=files.filter(f=>(f.subject+f.doNumber+f.department+'').toLowerCase().includes(doSearch.toLowerCase()));
+  if(doStatus!=='all') files=files.filter(f=>(f.status||'open')===doStatus);
+  if(doPriority!=='all') files=files.filter(f=>(f.priority||'normal')===doPriority);
+  if(doDept!=='all') files=files.filter(f=>f.department===doDept);
+  const depts=[...new Set(S.data.doFiles.map(f=>f.department).filter(Boolean))].sort();
+  return `
+  <div class="page-header"><div><div class="page-title">Daily Orders (DO Files)</div><div class="page-subtitle">${files.length} of ${S.data.doFiles.length} files</div></div></div>
+  <div class="filters">
+    <div class="search-box" style="flex:1;min-width:180px"><span class="material-icons-outlined">search</span>
+      <input placeholder="Search…" value="${escHtml(doSearch)}" oninput="doSearch=this.value;renderView('do-files')"></div>
+    <select class="filter-input" onchange="doStatus=this.value;renderView('do-files')">
+      <option value="all">All Status</option><option value="open" ${doStatus==='open'?'selected':''}>Open</option>
+      <option value="pending" ${doStatus==='pending'?'selected':''}>Pending</option>
+      <option value="in-progress" ${doStatus==='in-progress'?'selected':''}>In Progress</option>
+      <option value="closed" ${doStatus==='closed'?'selected':''}>Closed</option>
+    </select>
+    <select class="filter-input" onchange="doPriority=this.value;renderView('do-files')">
+      <option value="all">All Priority</option><option value="urgent" ${doPriority==='urgent'?'selected':''}>Urgent</option>
+      <option value="high" ${doPriority==='high'?'selected':''}>High</option><option value="normal" ${doPriority==='normal'?'selected':''}>Normal</option>
+      <option value="low" ${doPriority==='low'?'selected':''}>Low</option>
+    </select>
+    <select class="filter-input" onchange="doDept=this.value;renderView('do-files')">
+      <option value="all">All Depts</option>${depts.map(d=>`<option value="${escHtml(d)}" ${doDept===d?'selected':''}>${escHtml(d)}</option>`).join('')}
+    </select>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Date Issued</th><th>Due Date</th><th>Priority</th><th>Status</th><th>Tags</th><th></th></tr></thead>
+    <tbody>${files.length===0?`<tr><td colspan="9"><div class="empty-state"><span class="material-icons-outlined">assignment</span><p>No files found</p></div></td></tr>`:
+    files.map(f=>{ const dl=daysLeft(f.dueDate); const dc=dl!==null&&dl<0&&f.status!=='closed'?'color:var(--error);font-weight:500':'';
+    return `<tr onclick="openDoDetail('${f.id}')">
+      <td><strong>${escHtml(f.doNumber||'—')}</strong></td><td>${escHtml(f.subject||'—')}</td>
+      <td>${escHtml(f.department||'—')}</td><td>${f.dateIssued||fmt(f.createdAt)}</td>
+      <td style="${dc}">${f.dueDate||'—'}${dl!==null&&f.status!=='closed'?`<br><small>${dl<0?Math.abs(dl)+' days overdue':dl===0?'Due today':dl+' days left'}</small>`:''}</td>
+      <td>${priorityChip(f.priority)}</td><td>${statusChip(f.status||'open')}</td>
+      <td>${tagBadges(f.tags)}</td>
+      <td><button class="btn btn-text btn-sm" onclick="event.stopPropagation();openDoEdit('${f.id}')">Edit</button></td>
+    </tr>`; }).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+function openDoDetail(id) {
+  const f=S.data.doFiles.find(x=>x.id===id); if(!f) return;
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">DO File — ${escHtml(f.doNumber||'—')}</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body"><dl class="detail-grid">
+      <dt>DO Number</dt><dd>${escHtml(f.doNumber||'—')}</dd><dt>Subject</dt><dd>${escHtml(f.subject||'—')}</dd>
+      <dt>Department</dt><dd>${escHtml(f.department||'—')}</dd><dt>Date Issued</dt><dd>${f.dateIssued||fmt(f.createdAt)}</dd>
+      <dt>Due Date</dt><dd>${f.dueDate||'—'}</dd><dt>Priority</dt><dd>${priorityChip(f.priority)}</dd>
+      <dt>Status</dt><dd>${statusChip(f.status||'open')}</dd><dt>Tags</dt><dd>${tagBadges(f.tags)||'—'}</dd>
+      <dt>Remarks</dt><dd>${escHtml(f.remarks||'—')}</dd><dt>Created By</dt><dd>${escHtml(f.createdBy||'—')}</dd>
+      <dt>Created At</dt><dd>${fmtDt(f.createdAt)}</dd>
+    </dl></div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeModal();openDoEdit('${f.id}')">Edit</button>
+      <button class="btn btn-danger-text" onclick="closeModal();deleteRecord('doFiles','${f.id}')">Delete</button>
+      <button class="btn btn-filled" onclick="closeModal()">Close</button>
+    </div></div>`);
+}
+
+function openDoEdit(id) {
+  const f=id?S.data.doFiles.find(x=>x.id===id)||{}:{};
+  const depts=S.data.departments.map(d=>d.name).sort();
+  const tagOpts=S.data.tags.map(t=>`<label style="display:inline-flex;align-items:center;gap:4px;margin:3px;cursor:pointer"><input type="checkbox" value="${t.id}" ${(f.tags||[]).includes(t.id)?'checked':''}><span class="tag-chip" style="background:${t.bg};color:${t.fg}">${escHtml(t.name)}</span></label>`).join('');
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} DO File</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">DO Number</label><input id="mDoNum" class="form-input" value="${escHtml(f.doNumber||'')}" placeholder="DO/2025/001"></div>
+        <div class="form-group"><label class="form-label">Date Issued</label><input id="mDoDate" type="date" class="form-input" value="${f.dateIssued||today()}"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Subject *</label><input id="mDoSubj" class="form-input" value="${escHtml(f.subject||'')}" placeholder="Subject"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Department *</label><select id="mDoDept" class="form-select"><option value="">-- Select --</option>${depts.map(d=>`<option ${f.department===d?'selected':''}>${escHtml(d)}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Due Date</label><input id="mDoDue" type="date" class="form-input" value="${f.dueDate||''}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Priority</label><select id="mDoPri" class="form-select"><option value="normal" ${!f.priority||f.priority==='normal'?'selected':''}>Normal</option><option value="high" ${f.priority==='high'?'selected':''}>High</option><option value="urgent" ${f.priority==='urgent'?'selected':''}>Urgent</option><option value="low" ${f.priority==='low'?'selected':''}>Low</option></select></div>
+        <div class="form-group"><label class="form-label">Status</label><select id="mDoStatus" class="form-select"><option value="open" ${!f.status||f.status==='open'?'selected':''}>Open</option><option value="in-progress" ${f.status==='in-progress'?'selected':''}>In Progress</option><option value="pending" ${f.status==='pending'?'selected':''}>Pending</option><option value="closed" ${f.status==='closed'?'selected':''}>Closed</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Tags</label><div class="tag-picker" id="mDoTags">${tagOpts||'<span class="text-muted" style="font-size:12px">No tags yet</span>'}</div></div>
+      <div class="form-group"><label class="form-label">Remarks</label><textarea id="mDoRem" class="form-textarea" rows="3">${escHtml(f.remarks||'')}</textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="saveDoFile('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+    </div></div>`);
+}
+
+async function saveDoFile(id) {
+  const subj=$('mDoSubj').value.trim(), dept=$('mDoDept').value;
+  if(!subj){ snack('Subject required','warn'); return; } if(!dept){ snack('Department required','warn'); return; }
+  const tags=[...document.querySelectorAll('#mDoTags input:checked')].map(i=>i.value);
+  const data={doNumber:$('mDoNum').value.trim(),dateIssued:$('mDoDate').value,subject:subj,department:dept,dueDate:$('mDoDue').value,priority:$('mDoPri').value,status:$('mDoStatus').value,tags,remarks:$('mDoRem').value.trim(),updatedAt:serverTimestamp()};
+  setSyncState('syncing');
+  try{
+    if(id){ await updateDoc(doc(db,'doFiles',id),data); snack('DO File updated'); }
+    else{ data.createdAt=serverTimestamp(); data.createdBy=S.user.name+' ('+S.user.role+')'; await addDoc(collection(db,'doFiles'),data); snack('DO File created'); }
+    closeModal();
+  }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
+
+// SPECIAL FILES
+let spSearch='',spStatus='all';
+function renderSpecialFiles() {
+  let files=S.data.specialFiles;
+  if(spSearch) files=files.filter(f=>(f.title+f.department+f.fileNo+'').toLowerCase().includes(spSearch.toLowerCase()));
+  if(spStatus!=='all') files=files.filter(f=>(f.status||'open')===spStatus);
+  return `
+  <div class="page-header"><div><div class="page-title">Special Files</div><div class="page-subtitle">${files.length} of ${S.data.specialFiles.length} files</div></div></div>
+  <div class="filters"><div class="search-box" style="flex:1"><span class="material-icons-outlined">search</span>
+    <input placeholder="Search…" value="${escHtml(spSearch)}" oninput="spSearch=this.value;renderView('special-files')"></div>
+    <select class="filter-input" onchange="spStatus=this.value;renderView('special-files')">
+      <option value="all">All Status</option><option value="open" ${spStatus==='open'?'selected':''}>Open</option>
+      <option value="pending" ${spStatus==='pending'?'selected':''}>Pending</option>
+      <option value="in-progress" ${spStatus==='in-progress'?'selected':''}>In Progress</option>
+      <option value="closed" ${spStatus==='closed'?'selected':''}>Closed</option>
+    </select>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>File No.</th><th>Title</th><th>Department</th><th>Date</th><th>Priority</th><th>Status</th><th>Tags</th><th></th></tr></thead>
+  <tbody>${files.length===0?`<tr><td colspan="8"><div class="empty-state"><span class="material-icons-outlined">folder_special</span><p>No files found</p></div></td></tr>`:
+  files.map(f=>`<tr onclick="openSpDetail('${f.id}')"><td><strong>${escHtml(f.fileNo||'—')}</strong></td><td>${escHtml(f.title||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${f.dateCreated||fmt(f.createdAt)}</td><td>${priorityChip(f.priority)}</td><td>${statusChip(f.status||'open')}</td><td>${tagBadges(f.tags)}</td><td><button class="btn btn-text btn-sm" onclick="event.stopPropagation();openSpEdit('${f.id}')">Edit</button></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function openSpDetail(id) {
+  const f=S.data.specialFiles.find(x=>x.id===id); if(!f) return;
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">Special File — ${escHtml(f.fileNo||f.title||'—')}</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body"><dl class="detail-grid">
+      <dt>File No.</dt><dd>${escHtml(f.fileNo||'—')}</dd><dt>Title</dt><dd>${escHtml(f.title||'—')}</dd>
+      <dt>Department</dt><dd>${escHtml(f.department||'—')}</dd><dt>Date</dt><dd>${f.dateCreated||fmt(f.createdAt)}</dd>
+      <dt>Due Date</dt><dd>${f.dueDate||'—'}</dd><dt>Priority</dt><dd>${priorityChip(f.priority)}</dd>
+      <dt>Status</dt><dd>${statusChip(f.status||'open')}</dd><dt>Tags</dt><dd>${tagBadges(f.tags)||'—'}</dd>
+      <dt>Notes</dt><dd>${escHtml(f.notes||'—')}</dd><dt>Created By</dt><dd>${escHtml(f.createdBy||'—')}</dd>
+    </dl></div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeModal();openSpEdit('${f.id}')">Edit</button>
+      <button class="btn btn-danger-text" onclick="closeModal();deleteRecord('specialFiles','${f.id}')">Delete</button>
+      <button class="btn btn-filled" onclick="closeModal()">Close</button>
+    </div></div>`);
+}
+
+function openSpEdit(id) {
+  const f=id?S.data.specialFiles.find(x=>x.id===id)||{}:{};
+  const depts=S.data.departments.map(d=>d.name).sort();
+  const tagOpts=S.data.tags.map(t=>`<label style="display:inline-flex;align-items:center;gap:4px;margin:3px;cursor:pointer"><input type="checkbox" value="${t.id}" ${(f.tags||[]).includes(t.id)?'checked':''}><span class="tag-chip" style="background:${t.bg};color:${t.fg}">${escHtml(t.name)}</span></label>`).join('');
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Special File</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label">File No.</label><input id="mSpNo" class="form-input" value="${escHtml(f.fileNo||'')}"></div>
+        <div class="form-group"><label class="form-label">Date</label><input id="mSpDate" type="date" class="form-input" value="${f.dateCreated||today()}"></div></div>
+      <div class="form-group"><label class="form-label">Title *</label><input id="mSpTitle" class="form-input" value="${escHtml(f.title||'')}"></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Department *</label><select id="mSpDept" class="form-select"><option value="">-- Select --</option>${depts.map(d=>`<option ${f.department===d?'selected':''}>${escHtml(d)}</option>`).join('')}</select></div>
+        <div class="form-group"><label class="form-label">Due Date</label><input id="mSpDue" type="date" class="form-input" value="${f.dueDate||''}"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Priority</label><select id="mSpPri" class="form-select"><option value="normal" ${!f.priority||f.priority==='normal'?'selected':''}>Normal</option><option value="high" ${f.priority==='high'?'selected':''}>High</option><option value="urgent" ${f.priority==='urgent'?'selected':''}>Urgent</option><option value="low" ${f.priority==='low'?'selected':''}>Low</option></select></div>
+        <div class="form-group"><label class="form-label">Status</label><select id="mSpStatus" class="form-select"><option value="open" ${!f.status||f.status==='open'?'selected':''}>Open</option><option value="in-progress" ${f.status==='in-progress'?'selected':''}>In Progress</option><option value="pending" ${f.status==='pending'?'selected':''}>Pending</option><option value="closed" ${f.status==='closed'?'selected':''}>Closed</option></select></div></div>
+      <div class="form-group"><label class="form-label">Tags</label><div class="tag-picker" id="mSpTags">${tagOpts||'<span class="text-muted" style="font-size:12px">No tags yet</span>'}</div></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea id="mSpNotes" class="form-textarea">${escHtml(f.notes||'')}</textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="saveSpFile('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+    </div></div>`);
+}
+
+async function saveSpFile(id) {
+  const title=$('mSpTitle').value.trim(), dept=$('mSpDept').value;
+  if(!title){ snack('Title required','warn'); return; } if(!dept){ snack('Department required','warn'); return; }
+  const tags=[...document.querySelectorAll('#mSpTags input:checked')].map(i=>i.value);
+  const data={fileNo:$('mSpNo').value.trim(),dateCreated:$('mSpDate').value,title,department:dept,dueDate:$('mSpDue').value,priority:$('mSpPri').value,status:$('mSpStatus').value,tags,notes:$('mSpNotes').value.trim(),updatedAt:serverTimestamp()};
+  setSyncState('syncing');
+  try{
+    if(id){ await updateDoc(doc(db,'specialFiles',id),data); snack('File updated'); }
+    else{ data.createdAt=serverTimestamp(); data.createdBy=S.user.name+' ('+S.user.role+')'; await addDoc(collection(db,'specialFiles'),data); snack('File created'); }
+    closeModal();
+  }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
+
+// PRESS ATR
+let prSearch='',prStatus='all';
+function renderPressAtr() {
+  let files=S.data.pressAtr;
+  if(prSearch) files=files.filter(f=>(f.headline+f.source+f.department+'').toLowerCase().includes(prSearch.toLowerCase()));
+  if(prStatus!=='all') files=files.filter(f=>(f.status||'open')===prStatus);
+  return `
+  <div class="page-header"><div><div class="page-title">Press News ATR</div><div class="page-subtitle">${files.length} of ${S.data.pressAtr.length} items</div></div></div>
+  <div class="filters"><div class="search-box" style="flex:1"><span class="material-icons-outlined">search</span>
+    <input placeholder="Search…" value="${escHtml(prSearch)}" oninput="prSearch=this.value;renderView('press-atr')"></div>
+    <select class="filter-input" onchange="prStatus=this.value;renderView('press-atr')">
+      <option value="all">All Status</option><option value="open" ${prStatus==='open'?'selected':''}>Open</option>
+      <option value="replied" ${prStatus==='replied'?'selected':''}>Replied</option>
+      <option value="pending" ${prStatus==='pending'?'selected':''}>Pending</option>
+    </select>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Date</th><th>Headline</th><th>Source</th><th>Department</th><th>Status</th><th>ATR Remarks</th><th></th></tr></thead>
+  <tbody>${files.length===0?`<tr><td colspan="7"><div class="empty-state"><span class="material-icons-outlined">newspaper</span><p>No press ATR found</p></div></td></tr>`:
+  files.map(f=>`<tr onclick="openPrDetail('${f.id}')"><td>${f.dateReceived||fmt(f.createdAt)}</td><td>${escHtml(f.headline||'—')}</td><td>${escHtml(f.source||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${statusChip(f.status||'open')}</td><td>${escHtml((f.atrRemarks||'').slice(0,60))}</td><td><button class="btn btn-text btn-sm" onclick="event.stopPropagation();openPrEdit('${f.id}')">Edit</button></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function openPrDetail(id) {
+  const f=S.data.pressAtr.find(x=>x.id===id); if(!f) return;
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">Press ATR Detail</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body"><dl class="detail-grid">
+      <dt>Date</dt><dd>${f.dateReceived||fmt(f.createdAt)}</dd><dt>Headline</dt><dd>${escHtml(f.headline||'—')}</dd>
+      <dt>Source</dt><dd>${escHtml(f.source||'—')}</dd><dt>Department</dt><dd>${escHtml(f.department||'—')}</dd>
+      <dt>Status</dt><dd>${statusChip(f.status||'open')}</dd><dt>Summary</dt><dd>${escHtml(f.summary||'—')}</dd>
+      <dt>ATR Remarks</dt><dd>${escHtml(f.atrRemarks||'—')}</dd><dt>Created By</dt><dd>${escHtml(f.createdBy||'—')}</dd>
+    </dl></div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeModal();openPrEdit('${f.id}')">Edit</button>
+      <button class="btn btn-danger-text" onclick="closeModal();deleteRecord('pressAtr','${f.id}')">Delete</button>
+      <button class="btn btn-filled" onclick="closeModal()">Close</button>
+    </div></div>`);
+}
+
+function openPrEdit(id) {
+  const f=id?S.data.pressAtr.find(x=>x.id===id)||{}:{};
+  const depts=S.data.departments.map(d=>d.name).sort();
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Press ATR</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label">Date Received</label><input id="mPrDate" type="date" class="form-input" value="${f.dateReceived||today()}"></div>
+        <div class="form-group"><label class="form-label">Source / Publication</label><input id="mPrSrc" class="form-input" value="${escHtml(f.source||'')}" placeholder="e.g. The Hindu"></div></div>
+      <div class="form-group"><label class="form-label">Headline *</label><input id="mPrHead" class="form-input" value="${escHtml(f.headline||'')}"></div>
+      <div class="form-group"><label class="form-label">Department *</label><select id="mPrDept" class="form-select"><option value="">-- Select --</option>${depts.map(d=>`<option ${f.department===d?'selected':''}>${escHtml(d)}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label">News Summary</label><textarea id="mPrSum" class="form-textarea">${escHtml(f.summary||'')}</textarea></div>
+      <div class="form-group"><label class="form-label">ATR Remarks</label><textarea id="mPrAtr" class="form-textarea">${escHtml(f.atrRemarks||'')}</textarea></div>
+      <div class="form-group"><label class="form-label">Status</label><select id="mPrStatus" class="form-select"><option value="open" ${!f.status||f.status==='open'?'selected':''}>Open</option><option value="pending" ${f.status==='pending'?'selected':''}>Pending</option><option value="replied" ${f.status==='replied'?'selected':''}>Replied</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="savePrFile('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+    </div></div>`);
+}
+
+async function savePrFile(id) {
+  const head=$('mPrHead').value.trim(), dept=$('mPrDept').value;
+  if(!head){ snack('Headline required','warn'); return; } if(!dept){ snack('Department required','warn'); return; }
+  const data={dateReceived:$('mPrDate').value,source:$('mPrSrc').value.trim(),headline:head,department:dept,summary:$('mPrSum').value.trim(),atrRemarks:$('mPrAtr').value.trim(),status:$('mPrStatus').value,updatedAt:serverTimestamp()};
+  setSyncState('syncing');
+  try{
+    if(id){ await updateDoc(doc(db,'pressAtr',id),data); snack('ATR updated'); }
+    else{ data.createdAt=serverTimestamp(); data.createdBy=S.user.name+' ('+S.user.role+')'; await addDoc(collection(db,'pressAtr'),data); snack('ATR created'); }
+    closeModal();
+  }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
+
+// MEETINGS
+let meetSearch='';
+function renderMeetings() {
+  let meets=S.data.meetings;
+  if(meetSearch) meets=meets.filter(m=>(m.title+m.venue+'').toLowerCase().includes(meetSearch.toLowerCase()));
+  const upcoming=meets.filter(m=>m.date>=today()).sort((a,b)=>a.date.localeCompare(b.date));
+  const past=meets.filter(m=>m.date<today()).sort((a,b)=>b.date.localeCompare(a.date));
+  const rm=arr=>arr.length===0?'<div class="empty-state"><span class="material-icons-outlined">groups</span><p>No meetings</p></div>':arr.map(m=>`
+    <div class="meeting-card" onclick="openMeetDetail('${m.id}')">
+      <div style="display:flex;align-items:start;justify-content:space-between;gap:8px"><h4>${escHtml(m.title||'—')}</h4>${m.date===today()?'<span class="chip chip-error">Today</span>':''}</div>
+      <div class="m-meta">${m.date||'—'}${m.time?` · ${m.time}`:''}${m.venue?` · ${escHtml(m.venue)}`:''}</div>
+      <div class="m-stats"><span>${(m.departments||[]).length} depts</span><span>${(m.agenda||[]).length} agenda</span><span>${(m.actionItems||[]).filter(a=>!a.done).length} pending</span></div>
+    </div>`).join('');
+  return `
+  <div class="page-header"><div><div class="page-title">Review Meetings</div><div class="page-subtitle">${upcoming.length} upcoming · ${past.length} past</div></div></div>
+  <div class="filters"><div class="search-box" style="flex:1"><span class="material-icons-outlined">search</span>
+    <input placeholder="Search meetings…" value="${escHtml(meetSearch)}" oninput="meetSearch=this.value;renderView('meetings')"></div></div>
+  <div class="card"><div class="card-title"><span class="material-icons-outlined">upcoming</span>Upcoming</div>${rm(upcoming)}</div>
+  <div class="card"><div class="card-title"><span class="material-icons-outlined">history</span>Past Meetings</div>${rm(past)}</div>`;
+}
+
+function openMeetDetail(id) {
+  const m=S.data.meetings.find(x=>x.id===id); if(!m) return;
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${escHtml(m.title||'Meeting')}</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <dl class="detail-grid"><dt>Date</dt><dd>${m.date||'—'}</dd><dt>Time</dt><dd>${m.time||'—'}</dd>
+        <dt>Venue</dt><dd>${escHtml(m.venue||'—')}</dd><dt>Chaired By</dt><dd>${escHtml(m.chairedBy||'—')}</dd>
+        <dt>Departments</dt><dd>${(m.departments||[]).join(', ')||'—'}</dd></dl>
+      ${(m.agenda||[]).length?`<h4 style="margin:16px 0 8px">Agenda</h4>${m.agenda.map((a,i)=>`<div class="agenda-item">${i+1}. ${escHtml(a)}</div>`).join('')}`:''}
+      ${(m.actionItems||[]).length?`<h4 style="margin:16px 0 8px">Action Items</h4>${m.actionItems.map(a=>`<div class="action-item ${a.done?'done':''}"><div>${escHtml(a.text||'')}</div><div class="ai-meta"><span>Assigned: ${escHtml(a.assigned||'—')}</span><span>Due: ${a.due||'—'}</span><span>${a.done?'✓ Done':'Pending'}</span></div></div>`).join('')}`:''}
+      <div class="form-group" style="margin-top:16px"><label class="form-label">Minutes / Notes</label>
+        <div style="background:var(--surface-variant);padding:12px;border-radius:8px;font-size:13px;white-space:pre-wrap">${escHtml(m.minutes||'No minutes recorded')}</div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeModal();openMeetEdit('${m.id}')">Edit</button>
+      <button class="btn btn-danger-text" onclick="closeModal();deleteRecord('meetings','${m.id}')">Delete</button>
+      <button class="btn btn-filled" onclick="closeModal()">Close</button>
+    </div></div>`);
+}
+
+function openMeetEdit(id) {
+  const m=id?S.data.meetings.find(x=>x.id===id)||{}:{};
+  const depts=S.data.departments.map(d=>d.name).sort();
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Meeting</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Title *</label><input id="mMTitle" class="form-input" value="${escHtml(m.title||'')}"></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Date *</label><input id="mMDate" type="date" class="form-input" value="${m.date||today()}"></div>
+        <div class="form-group"><label class="form-label">Time</label><input id="mMTime" type="time" class="form-input" value="${m.time||''}"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Venue</label><input id="mMVenue" class="form-input" value="${escHtml(m.venue||'')}" placeholder="Collector's Chamber"></div>
+        <div class="form-group"><label class="form-label">Chaired By</label><input id="mMChair" class="form-input" value="${escHtml(m.chairedBy||'')}"></div></div>
+      <div class="form-group"><label class="form-label">Departments Involved</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1px solid var(--outline);border-radius:8px;max-height:150px;overflow-y:auto" id="mMDepts">
+          ${depts.map(d=>`<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" value="${escHtml(d)}" ${(m.departments||[]).includes(d)?'checked':''}><span style="font-size:12px">${escHtml(d)}</span></label>`).join('')}
+        </div></div>
+      <div class="form-group"><label class="form-label">Agenda Items (one per line)</label><textarea id="mMAgenda" class="form-textarea" rows="3" placeholder="Each line = one agenda item">${escHtml((m.agenda||[]).join('\n'))}</textarea></div>
+      <div class="form-group"><label class="form-label">Action Items (Task|Assigned To|Due Date, one per line)</label><textarea id="mMActions" class="form-textarea" rows="3" placeholder="Send report|Revenue Dept|2025-08-01">${escHtml((m.actionItems||[]).map(a=>`${a.text}|${a.assigned||''}|${a.due||''}`).join('\n'))}</textarea></div>
+      <div class="form-group"><label class="form-label">Minutes / Notes</label><textarea id="mMMinutes" class="form-textarea" rows="4">${escHtml(m.minutes||'')}</textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="saveMeeting('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+    </div></div>`);
+}
+
+async function saveMeeting(id) {
+  const title=$('mMTitle').value.trim(), date=$('mMDate').value;
+  if(!title){ snack('Title required','warn'); return; } if(!date){ snack('Date required','warn'); return; }
+  const departments=[...document.querySelectorAll('#mMDepts input:checked')].map(i=>i.value);
+  const agenda=$('mMAgenda').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const actionItems=$('mMActions').value.split('\n').map(s=>s.trim()).filter(Boolean).map(s=>{ const [text,assigned,due]=s.split('|'); return{text:text||s,assigned:assigned||'',due:due||'',done:false}; });
+  const data={title,date,time:$('mMTime').value,venue:$('mMVenue').value.trim(),chairedBy:$('mMChair').value.trim(),departments,agenda,actionItems,minutes:$('mMMinutes').value.trim(),updatedAt:serverTimestamp()};
+  setSyncState('syncing');
+  try{
+    if(id){ await updateDoc(doc(db,'meetings',id),data); snack('Meeting updated'); }
+    else{ data.createdAt=serverTimestamp(); data.createdBy=S.user.name+' ('+S.user.role+')'; await addDoc(collection(db,'meetings'),data); snack('Meeting created'); }
+    closeModal();
+  }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
+
+// CALENDAR
+function renderCalendar() {
+  const year=S.calMonth.getFullYear(), month=S.calMonth.getMonth();
+  const monthName=S.calMonth.toLocaleString('en-IN',{month:'long',year:'numeric'});
+  const firstDay=new Date(year,month,1).getDay(), daysInMonth=new Date(year,month+1,0).getDate(), ts=today();
+  const events={};
+  const addEv=(ds,label,cls)=>{ if(!ds||!ds.startsWith(`${year}-${String(month+1).padStart(2,'0')}`)) return; const d=parseInt(ds.split('-')[2]); if(!events[d]) events[d]=[]; events[d].push({label,cls}); };
+  S.data.doFiles.forEach(f=>{ if(f.dueDate) addEv(f.dueDate,f.doNumber||f.subject,f.dueDate<ts&&f.status!=='closed'?'overdue':f.dueDate===ts?'due-today':''); });
+  S.data.meetings.forEach(m=>{ if(m.date) addEv(m.date,m.title,m.date===ts?'due-today':''); });
+  let cells='';
+  for(let i=0;i<firstDay;i++) cells+=`<div class="cal-cell other-month"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const evs=events[d]||[];
+    cells+=`<div class="cal-cell ${ds===ts?'today':''}" onclick="calDayClick('${ds}')">
+      <div class="cal-date">${d}</div>
+      ${evs.slice(0,2).map(e=>`<div class="cal-item ${e.cls}">${escHtml(e.label.slice(0,14))}</div>`).join('')}
+      ${evs.length>2?`<div class="cal-more">+${evs.length-2} more</div>`:''}
+    </div>`;
+  }
+  return `
+  <div class="page-header"><div><div class="page-title">Calendar</div></div>
+    <div class="page-actions"><button class="btn btn-outlined" onclick="navigate('meetings')"><span class="material-icons-outlined">groups</span> All Meetings</button></div></div>
+  <div class="calendar">
+    <div class="cal-header">
+      <button class="icon-btn" onclick="calNav(-1)"><span class="material-icons">chevron_left</span></button>
+      <h3>${monthName}</h3>
+      <button class="icon-btn" onclick="calNav(1)"><span class="material-icons">chevron_right</span></button>
+      <button class="btn btn-text btn-sm" onclick="S.calMonth=new Date();renderView('calendar')">Today</button>
+    </div>
+    <div class="cal-grid">
+      ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-day-name">${d}</div>`).join('')}
+      ${cells}
+    </div>
+  </div>`;
+}
+function calNav(dir){ S.calMonth=new Date(S.calMonth.getFullYear(),S.calMonth.getMonth()+dir,1); renderView('calendar'); }
+function calDayClick(ds){
+  const evDO=S.data.doFiles.filter(f=>f.dueDate===ds), evMeet=S.data.meetings.filter(m=>m.date===ds);
+  if(!evDO.length&&!evMeet.length) return;
+  openModal(`<div class="modal"><div class="modal-header"><h2 class="modal-title">Events on ${ds}</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      ${evMeet.length?`<h4 style="margin-bottom:8px">Meetings</h4>${evMeet.map(m=>`<div class="meeting-card" onclick="closeModal();openMeetDetail('${m.id}')">${escHtml(m.title)} · ${m.time||''}</div>`).join('')}`:''}
+      ${evDO.length?`<h4 style="margin:12px 0 8px">DO Files Due</h4>${evDO.map(f=>`<div class="agenda-item" onclick="closeModal();openDoDetail('${f.id}')"><strong>${escHtml(f.doNumber||'—')}</strong> — ${escHtml(f.subject||'')}<br><small>${escHtml(f.department||'')} · ${statusChip(f.status)}</small></div>`).join('')}`:''}
+    </div>
+    <div class="modal-footer"><button class="btn btn-filled" onclick="closeModal()">Close</button></div></div>`);
+}
+
+// DEPT-WISE
+function renderDeptWise() {
+  const depts=S.data.departments.map(d=>d.name).sort();
+  return `<div class="page-header"><div><div class="page-title">Department-wise Report</div><div class="page-subtitle">${depts.length} departments</div></div></div>
+  <div class="dept-grid">${depts.map(dept=>{
+    const dos=S.data.doFiles.filter(f=>f.department===dept);
+    const open=dos.filter(f=>f.status!=='closed').length;
+    const od=dos.filter(f=>f.dueDate&&f.dueDate<today()&&f.status!=='closed').length;
+    const pr=S.data.pressAtr.filter(f=>f.department===dept).length;
+    return `<div class="dept-card ${od>0?'overdue':open===0?'clear':''}" onclick="openDeptDrill('${escHtml(dept)}')">
+      <h4>${escHtml(dept)}</h4>
+      <div class="dept-stats">
+        <div class="dept-stat"><span class="num">${dos.length}</span><span class="lbl">DO Files</span></div>
+        <div class="dept-stat"><span class="num" style="${open>0?'color:var(--primary)':''}">${open}</span><span class="lbl">Open</span></div>
+        <div class="dept-stat"><span class="num" style="${od>0?'color:var(--error)':''}">${od}</span><span class="lbl">Overdue</span></div>
+        <div class="dept-stat"><span class="num">${pr}</span><span class="lbl">Press ATR</span></div>
+      </div></div>`;
+  }).join('')}</div>`;
+}
+
+function openDeptDrill(dept) {
+  const dos=S.data.doFiles.filter(f=>f.department===dept);
+  const pr=S.data.pressAtr.filter(f=>f.department===dept);
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${escHtml(dept)}</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <h4 style="margin-bottom:8px">DO Files (${dos.length})</h4>
+      ${dos.length===0?'<p class="text-muted">None</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Due</th><th>Status</th></tr></thead><tbody>
+      ${dos.map(f=>`<tr onclick="closeModal();openDoDetail('${f.id}')"><td>${escHtml(f.doNumber||'—')}</td><td>${escHtml(f.subject||'—')}</td><td>${f.dueDate||'—'}</td><td>${statusChip(f.status||'open')}</td></tr>`).join('')}</tbody></table></div>`}
+      <h4 style="margin:16px 0 8px">Press ATR (${pr.length})</h4>
+      ${pr.length===0?'<p class="text-muted">None</p>':pr.map(p=>`<div class="activity-item"><div class="activity-body"><div class="a-title">${escHtml(p.headline||'—')}</div><div class="a-meta">${p.dateReceived||fmt(p.createdAt)} · ${escHtml(p.source||'')}</div></div>${statusChip(p.status)}</div>`).join('')}
+    </div>
+    <div class="modal-footer"><button class="btn btn-filled" onclick="closeModal()">Close</button></div></div>`);
+}
+
+// DATE-WISE
+let dwDate=today();
+function renderDateWise() {
+  const files=S.data.doFiles.filter(f=>f.dateIssued===dwDate||(f.createdAt&&new Date(f.createdAt.seconds*1000).toISOString().slice(0,10)===dwDate));
+  const meets=S.data.meetings.filter(m=>m.date===dwDate);
+  const press=S.data.pressAtr.filter(f=>f.dateReceived===dwDate);
+  return `
+  <div class="page-header"><div><div class="page-title">Date-wise Report</div></div>
+    <div class="page-actions"><input type="date" class="filter-input" value="${dwDate}" onchange="dwDate=this.value;renderView('date-wise')" style="width:auto"></div></div>
+  <div class="card"><div class="card-title"><span class="material-icons-outlined">assignment</span>DO Files (${files.length})</div>
+    ${files.length===0?'<p class="text-muted">No DO files for this date</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Priority</th><th>Status</th></tr></thead><tbody>
+    ${files.map(f=>`<tr onclick="openDoDetail('${f.id}')"><td>${escHtml(f.doNumber||'—')}</td><td>${escHtml(f.subject||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${priorityChip(f.priority)}</td><td>${statusChip(f.status||'open')}</td></tr>`).join('')}</tbody></table></div>`}
+  </div>
+  <div class="card"><div class="card-title"><span class="material-icons-outlined">groups</span>Meetings (${meets.length})</div>
+    ${meets.length===0?'<p class="text-muted">No meetings</p>':meets.map(m=>`<div class="meeting-card" onclick="openMeetDetail('${m.id}')"><h4>${escHtml(m.title||'—')}</h4><div class="m-meta">${m.time||''} · ${escHtml(m.venue||'')}</div></div>`).join('')}
+  </div>
+  <div class="card"><div class="card-title"><span class="material-icons-outlined">newspaper</span>Press ATR (${press.length})</div>
+    ${press.length===0?'<p class="text-muted">None</p>':press.map(p=>`<div class="activity-item"><div class="activity-body"><div class="a-title">${escHtml(p.headline||'—')}</div><div class="a-meta">${escHtml(p.source||'')} · ${statusChip(p.status)}</div></div></div>`).join('')}
+  </div>`;
+}
+
+// PENDING
+function renderPending() {
+  const allDepts=S.data.departments.map(d=>d.name).sort();
+  const ts=today();
+  const filed=new Set(S.data.doFiles.filter(f=>f.dateIssued===ts||(f.createdAt&&new Date(f.createdAt.seconds*1000).toISOString().slice(0,10)===ts)).map(f=>f.department).filter(Boolean));
+  const pending=allDepts.filter(d=>!filed.has(d)), done=allDepts.filter(d=>filed.has(d));
+  return `
+  <div class="page-header"><div><div class="page-title">Pending Departments</div><div class="page-subtitle">${pending.length} pending · ${done.length} filed today</div></div></div>
+  <div class="card" style="border-left:4px solid var(--error)"><div class="card-title"><span class="material-icons-outlined">pending_actions</span>Not Filed Today (${pending.length})</div>
+    ${pending.length===0?'<p style="color:var(--success)">✓ All departments have filed today!</p>':`<div style="display:flex;flex-wrap:wrap;gap:8px">${pending.map(d=>`<span class="chip chip-error">${escHtml(d)}</span>`).join('')}</div>`}
+  </div>
+  <div class="card" style="border-left:4px solid var(--success)"><div class="card-title"><span class="material-icons-outlined">check_circle</span>Filed Today (${done.length})</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">${done.map(d=>`<span class="chip chip-success">${escHtml(d)}</span>`).join('')}</div>
+  </div>`;
+}
+
+// DEPARTMENTS
+function renderDepartments() {
+  const depts=[...S.data.departments].sort((a,b)=>a.name.localeCompare(b.name));
+  return `<div class="page-header"><div><div class="page-title">Departments</div><div class="page-subtitle">${depts.length} departments</div></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Name</th><th>Category</th><th>DO Files</th><th>Press ATR</th><th></th></tr></thead>
+  <tbody>${depts.map(d=>`<tr><td><strong>${escHtml(d.name)}</strong></td><td>${escHtml(d.category||'General')}</td>
+    <td>${S.data.doFiles.filter(f=>f.department===d.name).length}</td>
+    <td>${S.data.pressAtr.filter(f=>f.department===d.name).length}</td>
+    <td><button class="btn btn-text btn-sm" onclick="openDeptEdit('${d.id}')">Edit</button>
+        <button class="btn btn-danger-text btn-sm" onclick="deleteRecord('departments','${d.id}')">Delete</button></td>
+  </tr>`).join('')}</tbody></table></div>`;
+}
+
+function openDeptEdit(id) {
+  const d=id?S.data.departments.find(x=>x.id===id)||{}:{};
+  openModal(`<div class="modal"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Department</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Name *</label><input id="mDName" class="form-input" value="${escHtml(d.name||'')}"></div>
+      <div class="form-group"><label class="form-label">Category</label><select id="mDCat" class="form-select">${['General','Revenue','Development','Infrastructure','Social','Law & Order'].map(c=>`<option ${d.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="saveDept('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+    </div></div>`);
+}
+
+async function saveDept(id) {
+  const name=$('mDName').value.trim(); if(!name){ snack('Name required','warn'); return; }
+  const data={name,category:$('mDCat').value,updatedAt:serverTimestamp()};
+  setSyncState('syncing');
+  try{
+    if(id){ await updateDoc(doc(db,'departments',id),data); snack('Updated'); }
+    else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,'departments'),data); snack('Added'); }
+    closeModal();
+  }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
+
+// TAGS
+function renderTags() {
+  return `<div class="page-header"><div><div class="page-title">Tags</div><div class="page-subtitle">${S.data.tags.length} tags</div></div></div>
+  <div class="card"><div style="display:flex;flex-wrap:wrap;gap:10px">
+    ${S.data.tags.map(t=>`<div style="display:flex;align-items:center;gap:6px;background:var(--surface-variant);padding:6px 12px;border-radius:999px">
+      <span class="tag-chip" style="background:${t.bg};color:${t.fg}">${escHtml(t.name)}</span>
+      <button class="icon-btn" style="width:24px;height:24px" onclick="deleteRecord('tags','${t.id}')"><span class="material-icons" style="font-size:14px">close</span></button>
+    </div>`).join('')}
+    ${S.data.tags.length===0?'<p class="text-muted">No tags yet.</p>':''}
+  </div></div>`;
+}
+
+function openTagEdit() {
+  openModal(`<div class="modal"><div class="modal-header"><h2 class="modal-title">New Tag</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Tag Name *</label><input id="mTName" class="form-input" placeholder="e.g. CM Cell, Urgent"></div>
+      <div class="form-group"><label class="form-label">Color</label><div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${TAG_COLORS.map((c,i)=>`<label style="cursor:pointer;display:flex;align-items:center;gap:4px"><input type="radio" name="tagColor" value="${i}" ${i===0?'checked':''}><span class="tag-chip" style="background:${c.bg};color:${c.fg}">${c.label}</span></label>`).join('')}
+      </div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="saveTag()"><span class="material-icons">add</span> Create</button>
+    </div></div>`);
+}
+
+async function saveTag() {
+  const name=$('mTName').value.trim(); if(!name){ snack('Name required','warn'); return; }
+  const ci=parseInt(document.querySelector('input[name="tagColor"]:checked')?.value||'0');
+  const c=TAG_COLORS[ci];
+  setSyncState('syncing');
+  try{ await addDoc(collection(db,'tags'),{name,bg:c.bg,fg:c.fg,createdAt:serverTimestamp()}); snack('Tag created'); closeModal(); }
+  catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
+
+// DELETE
+async function deleteRecord(col,id) {
+  if(!confirm('Delete this record? Cannot be undone.')) return;
+  setSyncState('syncing');
+  try{ await deleteDoc(doc(db,col,id)); snack('Deleted'); }
+  catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
+
+// GLOBAL SEARCH
+let searchOpen=false;
+function openSearch() {
+  if(searchOpen) return; searchOpen=true;
+  openModal(`<div class="modal wide"><div class="modal-header">
+    <span class="material-icons-outlined" style="color:var(--on-surface-variant)">search</span>
+    <input id="cmdInput" style="flex:1;border:none;outline:none;font-size:16px;background:none" placeholder="Search files, meetings…" autocomplete="off">
+    <button class="icon-btn" onclick="closeSearch()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body" id="cmdResults" style="padding-top:0"><div class="text-muted text-center" style="padding:24px">Start typing…</div></div>
+  </div>`,()=>{ searchOpen=false; });
+  const inp=$('cmdInput'); inp.focus();
+  inp.addEventListener('input',()=>{
+    const q=inp.value.toLowerCase().trim(), res=$('cmdResults');
+    if(!q){ res.innerHTML='<div class="text-muted text-center" style="padding:24px">Start typing…</div>'; return; }
+    const hits=[
+      ...S.data.doFiles.map(f=>({type:'DO File',icon:'assignment',label:f.subject||f.doNumber,sub:f.department,action:()=>{ closeSearch(); openDoDetail(f.id); }})),
+      ...S.data.specialFiles.map(f=>({type:'Special File',icon:'folder_special',label:f.title,sub:f.department,action:()=>{ closeSearch(); openSpDetail(f.id); }})),
+      ...S.data.pressAtr.map(f=>({type:'Press ATR',icon:'newspaper',label:f.headline,sub:f.source,action:()=>{ closeSearch(); openPrDetail(f.id); }})),
+      ...S.data.meetings.map(m=>({type:'Meeting',icon:'groups',label:m.title,sub:m.date,action:()=>{ closeSearch(); openMeetDetail(m.id); }})),
+    ].filter(h=>(h.label||'').toLowerCase().includes(q)||(h.sub||'').toLowerCase().includes(q));
+    res.innerHTML=hits.length===0?'<div class="text-muted text-center" style="padding:24px">No results</div>':
+      `<div class="cmd-results">${hits.slice(0,10).map((h,i)=>`<div class="cmd-item" data-i="${i}"><div class="c-icon"><span class="material-icons-outlined">${h.icon}</span></div><div class="c-body"><div class="c-title">${escHtml(h.label||'—')}</div><div class="c-meta">${h.type} · ${escHtml(h.sub||'')}</div></div></div>`).join('')}</div>`;
+    res.querySelectorAll('.cmd-item').forEach((el,i)=>el.addEventListener('click',()=>hits[i].action()));
+  });
+}
+function closeSearch(){ closeModal(); searchOpen=false; }
+
+// EXPORT
+function exportAllExcel() {
+  const wb=XLSX.utils.book_new();
+  const addS=(name,data)=>{ if(data.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),name); };
+  addS('DO Files',S.data.doFiles.map(f=>({'DO Number':f.doNumber||'','Subject':f.subject||'','Department':f.department||'','Date Issued':f.dateIssued||'','Due Date':f.dueDate||'','Priority':f.priority||'','Status':f.status||'','Remarks':f.remarks||''})));
+  addS('Special Files',S.data.specialFiles.map(f=>({'File No':f.fileNo||'','Title':f.title||'','Department':f.department||'','Date':f.dateCreated||'','Due Date':f.dueDate||'','Priority':f.priority||'','Status':f.status||'','Notes':f.notes||''})));
+  addS('Press ATR',S.data.pressAtr.map(f=>({'Date':f.dateReceived||'','Headline':f.headline||'','Source':f.source||'','Department':f.department||'','Status':f.status||'','ATR Remarks':f.atrRemarks||''})));
+  addS('Meetings',S.data.meetings.map(m=>({'Title':m.title||'','Date':m.date||'','Time':m.time||'','Venue':m.venue||'','Chaired By':m.chairedBy||'','Departments':(m.departments||[]).join(', '),'Minutes':m.minutes||''})));
+  XLSX.writeFile(wb,`MYL-Portal-Export-${today()}.xlsx`);
+  snack('Excel exported');
+}
+
+// BULK IMPORT
+function openBulkImport() {
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">Bulk Import DO Files</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body">
+      <p class="text-muted" style="margin-bottom:12px">Columns: <strong>DO Number, Subject, Department, Date Issued, Due Date, Priority, Status, Remarks</strong></p>
+      <div class="form-group"><label class="form-label">Excel File (.xlsx)</label><input type="file" id="importFile" accept=".xlsx,.xls" class="form-input"></div>
+      <div id="importPreview"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-filled" id="importBtn" onclick="doImport()" disabled><span class="material-icons">upload</span> Import</button>
+    </div></div>`);
+  $('importFile').addEventListener('change',e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const r=new FileReader();
+    r.onload=ev=>{ const wb=XLSX.read(ev.target.result,{type:'binary'}); window._importRows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]); $('importPreview').innerHTML=`<div class="chip chip-success" style="margin-top:8px">✓ ${window._importRows.length} rows ready</div>`; $('importBtn').disabled=false; };
+    r.readAsBinaryString(file);
+  });
+}
+
+async function doImport() {
+  const rows=window._importRows||[]; if(!rows.length) return;
+  setSyncState('syncing'); let count=0;
+  for(const r of rows){ try{ await addDoc(collection(db,'doFiles'),{doNumber:r['DO Number']||'',subject:r['Subject']||r['subject']||'',department:r['Department']||r['department']||'',dateIssued:r['Date Issued']||r['dateIssued']||today(),dueDate:r['Due Date']||r['dueDate']||'',priority:(r['Priority']||'normal').toLowerCase(),status:(r['Status']||'open').toLowerCase(),remarks:r['Remarks']||'',tags:[],createdAt:serverTimestamp(),createdBy:'Bulk Import · '+S.user.name}); count++; }catch(e){ console.error(e); } }
+  snack(`Imported ${count} records`); closeModal();
+}
+
+// ABOUT
+function showAbout() {
+  openModal(`<div class="modal"><div class="modal-header"><h2 class="modal-title">About</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <div class="modal-body" style="text-align:center;padding:32px 24px">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><span class="material-icons" style="font-size:40px">account_balance</span></div>
+      <h2 style="font-size:20px;margin-bottom:4px">Mayiladuthurai District Portal</h2>
+      <p class="text-muted">Office of the District Collector</p>
+      <p style="margin:16px 0;font-size:13px;color:var(--on-surface-variant)">Unified portal for DO file tracking, press ATR, review meetings, and district-wide reporting.</p>
+      <div class="chip chip-primary">Firebase · Real-time Sync</div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-filled" onclick="closeModal()">Close</button></div></div>`);
+}
+
+// FAB
+function openAdd() {
+  const map={'do-files':()=>openDoEdit(''),'special-files':()=>openSpEdit(''),'press-atr':()=>openPrEdit(''),'meetings':()=>openMeetEdit(''),'departments':()=>openDeptEdit(''),'tags':openTagEdit};
+  (map[S.view]||(() => {}))();
+}
+
+// SIDEBAR
+function closeSidebar(){ $('sidebar').classList.remove('open'); $('scrim').classList.remove('show'); }
+function toggleSidebar(){ $('sidebar').classList.toggle('open'); $('scrim').classList.toggle('show'); }
+
+// LOGOUT
+function doLogout(){ if(!confirm('Log out?')) return; localStorage.removeItem('portalUser'); S.unsubs.forEach(u=>u()); location.reload(); }
+
+// CLICK ROUTER
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-action]'); if(!el) return;
+  const a=el.dataset.action, p=el.dataset.param;
+  ({navigate:()=>navigate(p),login:doLogin,logout:doLogout,toggleSidebar,openSearch,openAdd,openBulkImport,exportAllExcel,showAbout,print:()=>window.print()})[a]?.();
+});
+
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='k'){ e.preventDefault(); openSearch(); }
+  if(e.key==='Escape') closeModal();
+});
+
+// EXPOSE GLOBALS
+Object.assign(window,{navigate,openDoDetail,openDoEdit,saveDoFile,openSpDetail,openSpEdit,saveSpFile,openPrDetail,openPrEdit,savePrFile,openMeetDetail,openMeetEdit,saveMeeting,calNav,calDayClick,openDeptDrill,openDeptEdit,saveDept,openTagEdit,saveTag,deleteRecord,closeModal,closeSearch,doImport,S});
+
+boot();
+
+</script>
 
 </body>
 </html>
