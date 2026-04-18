@@ -9,219 +9,343 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons&family=Material+Icons+Outlined" rel="stylesheet" />
 <style>
-/* Prevent icon font text from showing raw names before font loads */
-.material-icons, .material-icons-outlined {
-  font-size: 20px;
-  line-height: 1;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-  -webkit-font-smoothing: antialiased;
-  font-feature-settings: 'liga';
-  display: inline-block;
-  overflow: hidden;
-  max-width: 24px;
-  max-height: 24px;
-  flex-shrink: 0;
-}
+/* ============ SVG ICON SYSTEM ============ */
+.mi { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; width:20px; height:20px; }
+.mi svg { width:20px; height:20px; fill:currentColor; }
+.mi-sm svg { width:18px; height:18px; }
+.mi-lg svg { width:24px; height:24px; }
+/* Legacy class compat */
+.material-icons, .material-icons-outlined { display:none !important; }
 </style>
+<script>
+/* ============ SVG ICON LIBRARY ============ */
+const ICONS = {
+  dashboard: `<svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>`,
+  today: `<svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13zM12 10H7v5h5v-5z"/></svg>`,
+  assignment: `<svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>`,
+  folder_special: `<svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-2.06 11L15 15.28 12.06 17l.78-3.33-2.59-2.24 3.41-.29L15 8l1.34 3.14 3.41.29-2.59 2.24.78 3.33z"/></svg>`,
+  newspaper: `<svg viewBox="0 0 24 24"><path d="M22 3H2v18l4-4h16V3zm-4 11H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>`,
+  calendar_today: `<svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>`,
+  calendar_month: `<svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7v-5z"/></svg>`,
+  groups: `<svg viewBox="0 0 24 24"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>`,
+  business: `<svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>`,
+  pending_actions: `<svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>`,
+  apartment: `<svg viewBox="0 0 24 24"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zM7 19H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5v-2h2v2zm4 4H9v-2h2v2zm0-4H9v-2h2v2zm0-4H9V7h2v2zm0-4H9V3h2v2zm4 12h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm0-4h-2V3h2v2zm4 16h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg>`,
+  sell: `<svg viewBox="0 0 24 24"><path d="M21.41 11.41l-8.83-8.83c-.37-.37-.88-.58-1.41-.58H4c-1.1 0-2 .9-2 2v7.17c0 .53.21 1.04.59 1.41l8.83 8.83c.78.78 2.05.78 2.83 0l7.17-7.17c.78-.78.78-2.04-.01-2.83zM6.5 8C5.67 8 5 7.33 5 6.5S5.67 5 6.5 5 8 5.67 8 6.5 7.33 8 6.5 8z"/></svg>`,
+  upload_file: `<svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11 8 15.01z"/></svg>`,
+  download: `<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`,
+  info: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>`,
+  menu: `<svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>`,
+  search: `<svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>`,
+  print: `<svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>`,
+  logout: `<svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>`,
+  add: `<svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>`,
+  close: `<svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`,
+  warning_amber: `<svg viewBox="0 0 24 24"><path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>`,
+  account_balance: `<svg viewBox="0 0 24 24"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zM11.5 1L2 6v2h19V6l-9.5-5z"/></svg>`,
+  history: `<svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>`,
+  login: `<svg viewBox="0 0 24 24"><path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/></svg>`,
+  edit: `<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>`,
+  delete: `<svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`,
+  expand_more: `<svg viewBox="0 0 24 24"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"/></svg>`,
+  chevron_left: `<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>`,
+  chevron_right: `<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>`,
+  open_in_new: `<svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>`,
+  upload: `<svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>`,
+};
+
+/* Render an icon by name into HTML string */
+function icon(name, extraClass) {
+  const svg = ICONS[name] || ICONS['info'];
+  return `<span class="mi${extraClass?' '+extraClass:''}">${svg}</span>`;
+}
+window.icon = icon;
+
+/* SVG lookup for runtime icon rendering (e.g. command palette) */
+window.ICON_SVGS = {};
+for (const [k, v] of Object.entries(ICONS)) {
+  window.ICON_SVGS[k] = v;
+}
+// aliases used in search hits
+window.ICON_SVGS['description'] = ICONS['assignment'];
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 /* ================================================================
-   MAYILADUTHURAI DISTRICT PORTAL - v3
-   Google Material Design 3 / Material You
+   MAYILADUTHURAI DISTRICT PORTAL - Google Material Design 3
    ================================================================ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 
-/* Fix: Prevent Material Icon text from overflowing when font not yet loaded */
-.material-icons,.material-icons-outlined{
-  display:inline-block;overflow:hidden;
-  max-width:24px;width:24px;height:24px;
-  line-height:24px;text-align:center;
-  font-size:20px!important;
-  vertical-align:middle;
-  flex-shrink:0;
-}
+.material-icons,.material-icons-outlined{display:none!important;}
+
+/* SVG icon sizing overrides */
+.kpi-icon .mi svg{width:20px;height:20px;}
+.nav-item .mi{width:20px;height:20px;}
+.nav-item .mi svg{width:20px;height:20px;}
+.icon-btn .mi svg{width:20px;height:20px;}
+.btn .mi svg{width:18px;height:18px;}
+.card-title .mi svg{width:18px;height:18px;color:var(--primary);}
+.activity-icon .mi svg{width:18px;height:18px;}
+.cmd-item .mi svg{width:17px;height:17px;}
+.empty-state .mi{width:48px;height:48px;}
+.empty-state .mi svg{width:48px;height:48px;color:var(--outline-strong);}
+.fab .mi svg{width:22px;height:22px;}
+#bootLoader .seal .mi svg{width:38px;height:38px;}
+.login-box .seal .mi svg{width:32px;height:32px;}
+.sync-indicator .mi svg{width:14px;height:14px;}
+
 :root{
-  --primary:#1a73e8;
-  --primary-dark:#1557b0;
-  --primary-light:#e8f0fe;
-  --primary-container:#d3e3fd;
+  /* Google Blue palette */
+  --blue-50:#e8f0fe;
+  --blue-100:#d3e3fd;
+  --blue-200:#aecbfa;
+  --blue-600:#1a73e8;
+  --blue-700:#1557b0;
+  --blue-800:#0d47a1;
+  /* Google Green */
+  --green-50:#e6f4ea;
+  --green-100:#ceead6;
+  --green-600:#188038;
+  --green-700:#0d6e2e;
+  /* Google Yellow */
+  --yellow-50:#fef7e0;
+  --yellow-600:#f9ab00;
+  /* Google Red */
+  --red-50:#fce8e6;
+  --red-600:#d93025;
+  --red-700:#b3261e;
+
+  /* Semantic */
+  --primary:var(--blue-600);
+  --primary-dark:var(--blue-700);
+  --primary-container:var(--blue-100);
+  --primary-light:var(--blue-50);
   --on-primary:#fff;
   --on-primary-container:#041e49;
-  --secondary:#188038;
-  --secondary-container:#ceead6;
-  --tertiary:#f9ab00;
-  --error:#b3261e;
-  --error-light:#f9dedc;
-  --warning:#f9ab00;
-  --warning-light:#fef7e0;
-  --success:#188038;
-  --success-light:#e6f4ea;
+  --secondary:var(--green-600);
+  --secondary-container:var(--green-100);
+  --error:var(--red-700);
+  --error-light:var(--red-50);
+  --warning:var(--yellow-600);
+  --warning-light:var(--yellow-50);
+  --success:var(--green-600);
+  --success-light:var(--green-50);
+
+  /* Surface */
   --surface:#ffffff;
-  --surface-1:#f2f6ff;
-  --surface-variant:#e7eaf0;
-  --background:#f0f4ff;
-  --on-surface:#1c1b1f;
-  --on-surface-variant:#49454f;
-  --outline:#79747e;
-  --outline-variant:#cac4d0;
-  --elevation-1:0 1px 3px 1px rgba(0,0,0,.15),0 1px 2px 0 rgba(0,0,0,.3);
-  --elevation-2:0 2px 6px 2px rgba(0,0,0,.15),0 1px 2px 0 rgba(0,0,0,.3);
-  --elevation-3:0 4px 8px 3px rgba(0,0,0,.15),0 1px 3px 0 rgba(0,0,0,.3);
-  --sidebar-width:280px;
+  --surface-dim:#f3f4f6;
+  --surface-variant:#f1f3f4;
+  --background:#f8f9fa;
+  --on-surface:#202124;
+  --on-surface-variant:#5f6368;
+  --outline:#dadce0;
+  --outline-strong:#bdc1c6;
+
+  /* Elevation shadows (Google-style, very subtle) */
+  --shadow-1:0 1px 2px 0 rgba(60,64,67,.3),0 1px 3px 1px rgba(60,64,67,.15);
+  --shadow-2:0 1px 2px 0 rgba(60,64,67,.3),0 2px 6px 2px rgba(60,64,67,.15);
+  --shadow-3:0 4px 8px 3px rgba(60,64,67,.15),0 1px 3px rgba(60,64,67,.3);
+
+  /* Layout */
+  --sidebar-width:256px;
   --topbar-height:64px;
-  --radius-xs:4px;
-  --radius-sm:8px;
-  --radius-md:12px;
-  --radius-lg:16px;
-  --radius-xl:28px;
-  --radius-full:999px;
+
+  /* Border radius */
+  --r-xs:4px;
+  --r-sm:8px;
+  --r-md:12px;
+  --r-lg:16px;
+  --r-xl:24px;
+  --r-full:999px;
+
+  /* Transitions */
+  --ease-std:cubic-bezier(.4,0,.2,1);
 }
+
 body{
-  font-family:'Google Sans','Roboto',system-ui,-apple-system,'Segoe UI',sans-serif;
-  background:var(--background);color:var(--on-surface);font-size:14px;line-height:1.5;
-  overflow:hidden;-webkit-font-smoothing:antialiased;
+  font-family:'Google Sans','Roboto',system-ui,-apple-system,sans-serif;
+  background:var(--background);
+  color:var(--on-surface);
+  font-size:14px;
+  line-height:1.5;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,select,textarea{font-family:inherit;font-size:14px}
 a{color:var(--primary);text-decoration:none}
-a:hover{text-decoration:underline}
 
 /* ============ BOOT LOADER ============ */
 #bootLoader{
-  position:fixed;inset:0;background:var(--surface);z-index:9999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
-  transition:opacity .4s;
+  position:fixed;inset:0;background:#fff;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  transition:opacity .4s var(--ease-std);
 }
 #bootLoader.hide{opacity:0;pointer-events:none}
 #bootLoader .seal{
-  width:80px;height:80px;border-radius:24px;
-  background:linear-gradient(135deg,#1a73e8,#4285f4);
+  width:72px;height:72px;border-radius:20px;
+  background:var(--primary);
   color:#fff;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 32px rgba(26,115,232,.35);
+  box-shadow:0 4px 20px rgba(26,115,232,.4);
 }
-#bootLoader .seal .material-icons{font-size:44px}
-#bootLoader h2{font-size:20px;font-weight:500;color:var(--on-surface);letter-spacing:-.2px}
+#bootLoader .seal .material-icons{font-size:38px!important;width:38px;height:38px;max-width:38px;max-height:38px}
+#bootLoader h2{font-size:18px;font-weight:500;color:var(--on-surface);letter-spacing:-.2px}
 #bootLoader p{font-size:13px;color:var(--on-surface-variant)}
 #bootLoader .boot-spinner{
-  width:36px;height:36px;border:3px solid var(--primary-container);
+  width:32px;height:32px;border:3px solid var(--primary-container);
   border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;
 }
 
 /* ============ TOP APP BAR ============ */
 .app-bar{
   position:fixed;top:0;left:0;right:0;height:var(--topbar-height);
-  background:var(--surface);
-  border-bottom:1px solid rgba(0,0,0,.08);
-  display:flex;align-items:center;padding:0 8px 0 16px;gap:8px;z-index:100;
+  background:#fff;
+  border-bottom:1px solid var(--outline);
+  display:flex;align-items:center;padding:0 12px 0 0;gap:4px;z-index:100;
+  box-shadow:none;
 }
-.app-bar .brand{display:flex;align-items:center;gap:10px;min-width:0;flex-shrink:0}
+.app-bar .brand{
+  display:flex;align-items:center;gap:12px;padding:0 16px;
+  min-width:var(--sidebar-width);flex-shrink:0;
+  border-right:1px solid var(--outline);height:100%;
+  overflow:hidden;
+}
 .app-bar .brand .logo{
-  width:40px;height:40px;border-radius:12px;
-  background:linear-gradient(135deg,#1a73e8,#4285f4);
+  width:36px;height:36px;border-radius:10px;
+  background:var(--primary);
   color:#fff;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 8px rgba(26,115,232,.3);
+  flex-shrink:0;
 }
-.app-bar .brand .logo .material-icons{font-size:22px}
+.app-bar .brand .logo .material-icons{font-size:20px!important;width:20px;height:20px;max-width:20px;max-height:20px}
 .app-bar h1{
   font-family:'Google Sans Display','Google Sans',sans-serif;
-  font-size:16px;font-weight:500;color:var(--on-surface);
+  font-size:15px;font-weight:500;color:var(--on-surface);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  letter-spacing:-.2px;
+  letter-spacing:-.1px;display:flex;flex-direction:column;min-width:0;
 }
-.app-bar h1 .subtitle{font-size:11px;color:var(--on-surface-variant);font-weight:400;display:block;letter-spacing:0}
-.app-bar .spacer{flex:1}
+.app-bar h1 .subtitle{
+  font-size:11px;color:var(--on-surface-variant);
+  font-weight:400;display:block;letter-spacing:0;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.app-bar .topbar-center{
+  flex:1;display:flex;align-items:center;justify-content:center;padding:0 16px;
+}
+.app-bar .topbar-right{
+  display:flex;align-items:center;gap:4px;padding-right:4px;flex-shrink:0;
+}
 .icon-btn{
   width:40px;height:40px;border-radius:50%;display:inline-flex;
   align-items:center;justify-content:center;color:var(--on-surface-variant);
   transition:background .15s;flex-shrink:0;position:relative;
 }
-.icon-btn:hover{background:rgba(26,115,232,.08)}
-.icon-btn .material-icons,.icon-btn .material-icons-outlined{font-size:22px}
+.icon-btn:hover{background:rgba(32,33,36,.08)}
+.icon-btn .material-icons,.icon-btn .material-icons-outlined{font-size:20px!important;width:20px;height:20px;max-width:20px;max-height:20px}
 .menu-btn{display:none}
+
+/* User avatar chip */
 .user-chip{
-  display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;
-  background:var(--surface-variant);border-radius:var(--radius-full);cursor:pointer;
-  transition:background .15s;flex-shrink:0;
+  display:flex;align-items:center;gap:8px;padding:4px 14px 4px 4px;
+  background:var(--surface-variant);border-radius:var(--r-full);cursor:pointer;
+  transition:background .15s;flex-shrink:0;margin-left:4px;
 }
-.user-chip:hover{background:var(--outline-variant)}
+.user-chip:hover{background:var(--outline)}
 .user-avatar{
   width:32px;height:32px;border-radius:50%;
   background:linear-gradient(135deg,#1a73e8,#34a853);
   color:#fff;display:flex;align-items:center;justify-content:center;
-  font-weight:600;font-size:13px;letter-spacing:.5px;
+  font-weight:600;font-size:13px;letter-spacing:.5px;flex-shrink:0;
 }
-.user-chip span{font-size:13px;font-weight:500;color:var(--on-surface)}
+.user-chip .u-info{display:flex;flex-direction:column;line-height:1.2}
+.user-chip .u-name{font-size:13px;font-weight:500;color:var(--on-surface)}
+.user-chip .u-role{font-size:10px;color:var(--on-surface-variant)}
+
+/* Sync pill */
 .sync-indicator{
-  display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-full);
-  background:var(--success-light);color:var(--success);font-size:12px;font-weight:500;
-  flex-shrink:0;
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;
+  border-radius:var(--r-full);font-size:12px;font-weight:500;
+  background:var(--success-light);color:var(--success);flex-shrink:0;
+  transition:all .2s;
 }
 .sync-indicator.syncing{background:var(--primary-light);color:var(--primary)}
 .sync-indicator.offline{background:var(--error-light);color:var(--error)}
-.sync-indicator .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
-.sync-indicator.syncing .dot{animation:pulse 1.2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.sync-indicator .dot{
+  width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;
+}
+.sync-indicator.syncing .dot{animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
 /* ============ GLOBAL SEARCH ============ */
 .global-search{
-  flex:1;max-width:480px;display:flex;align-items:center;gap:8px;
-  background:var(--surface-variant);padding:8px 16px;border-radius:var(--radius-full);
-  transition:all .2s;cursor:text;border:1px solid transparent;
+  width:100%;max-width:520px;display:flex;align-items:center;gap:10px;
+  background:var(--surface-variant);padding:9px 18px;border-radius:var(--r-full);
+  transition:all .2s var(--ease-std);cursor:text;border:1px solid transparent;
 }
 .global-search:focus-within{
-  background:var(--surface);
-  border-color:var(--primary);
-  box-shadow:0 1px 6px rgba(26,115,232,.2);
+  background:#fff;border-color:var(--primary);
+  box-shadow:0 1px 3px rgba(26,115,232,.25);
 }
-.global-search input{flex:1;border:none;background:none;outline:none;font-size:14px}
-.global-search .material-icons-outlined{color:var(--on-surface-variant);font-size:20px}
+.global-search input{flex:1;border:none;background:none;outline:none;font-size:14px;color:var(--on-surface)}
+.global-search input::placeholder{color:var(--on-surface-variant)}
+.global-search .material-icons-outlined{color:var(--on-surface-variant);font-size:20px!important;width:20px;height:20px;max-width:20px}
 .global-search kbd{
-  font-family:'Google Sans',sans-serif;font-size:11px;padding:2px 7px;border-radius:var(--radius-xs);
-  background:var(--surface);border:1px solid var(--outline-variant);color:var(--on-surface-variant);
+  font-family:'Google Sans',sans-serif;font-size:11px;padding:2px 8px;
+  border-radius:var(--r-xs);background:#fff;border:1px solid var(--outline);
+  color:var(--on-surface-variant);letter-spacing:.3px;flex-shrink:0;
 }
 
 /* ============ SIDEBAR ============ */
 .sidebar{
   position:fixed;top:var(--topbar-height);left:0;bottom:0;width:var(--sidebar-width);
-  background:var(--surface);border-right:1px solid rgba(0,0,0,.08);
-  overflow-y:auto;overflow-x:hidden;padding:8px 0 16px;z-index:90;
-  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  background:#fff;border-right:1px solid var(--outline);
+  overflow-y:auto;overflow-x:hidden;
+  padding:12px 0 24px;z-index:90;
+  transition:transform .3s var(--ease-std);
 }
 .sidebar::-webkit-scrollbar{width:4px}
 .sidebar::-webkit-scrollbar-track{background:transparent}
-.sidebar::-webkit-scrollbar-thumb{background:var(--outline-variant);border-radius:4px}
-.sidebar-section{padding:4px 0 8px;border-bottom:1px solid rgba(0,0,0,.06)}
-.sidebar-section:last-child{border-bottom:none}
+.sidebar::-webkit-scrollbar-thumb{background:var(--outline);border-radius:4px}
+.sidebar-section{padding:2px 0 8px}
+.sidebar-divider{height:1px;background:var(--outline);margin:4px 12px 8px}
 .sidebar-label{
-  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;
-  color:var(--on-surface-variant);padding:12px 28px 6px;opacity:.7;
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--on-surface-variant);padding:10px 16px 4px;opacity:.8;
 }
 .nav-item{
-  display:flex;align-items:center;gap:0;padding:0 12px 0 12px;margin:2px 8px;
-  border-radius:var(--radius-full);color:var(--on-surface);font-size:14px;font-weight:500;
-  cursor:pointer;transition:background .15s;height:48px;
+  display:flex;align-items:center;gap:12px;
+  padding:0 16px;margin:1px 8px;
+  border-radius:var(--r-full);
+  color:var(--on-surface-variant);font-size:13.5px;font-weight:500;
+  cursor:pointer;transition:background .15s,color .15s;height:44px;
   overflow:hidden;min-width:0;
+  letter-spacing:.1px;
 }
-.nav-item:hover{background:rgba(0,0,0,.06)}
-.nav-item.active{background:var(--primary-container);color:var(--on-primary-container)}
+.nav-item:hover{background:var(--surface-variant);color:var(--on-surface)}
+.nav-item.active{
+  background:var(--primary-container);color:var(--on-primary-container);
+  font-weight:600;
+}
+.nav-item.active .material-icons,
+.nav-item.active .material-icons-outlined{color:var(--primary)}
 .nav-item .nav-icon{
-  width:24px;height:24px;display:flex;align-items:center;justify-content:center;
-  margin-right:12px;flex-shrink:0;overflow:hidden;
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;overflow:hidden;
 }
-.nav-item .material-icons,.nav-item .material-icons-outlined{font-size:20px;display:block;overflow:hidden;max-width:24px;max-height:24px}
-.nav-item .nav-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.nav-item .material-icons,.nav-item .material-icons-outlined{
+  font-size:20px!important;display:block;overflow:hidden;
+  max-width:20px!important;max-height:20px;width:20px!important;height:20px;
+  color:inherit;white-space:nowrap;
+}
+.nav-item .nav-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;line-height:1}
 .nav-item .badge{
   background:var(--primary);color:#fff;font-size:11px;
-  padding:2px 8px;border-radius:var(--radius-full);font-weight:600;min-width:20px;text-align:center;
+  padding:1px 7px;border-radius:var(--r-full);font-weight:700;
+  min-width:20px;text-align:center;flex-shrink:0;letter-spacing:0;
 }
 .nav-item.active .badge{background:var(--primary-dark)}
 .nav-item .badge.danger{background:var(--error)}
@@ -230,178 +354,245 @@ a:hover{text-decoration:underline}
 /* ============ MAIN ============ */
 .main{
   position:absolute;top:var(--topbar-height);left:var(--sidebar-width);right:0;bottom:0;
-  overflow-y:auto;padding:24px;
+  overflow-y:auto;padding:28px 32px;
+  background:var(--background);
 }
-.page-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.main::-webkit-scrollbar{width:6px}
+.main::-webkit-scrollbar-track{background:transparent}
+.main::-webkit-scrollbar-thumb{background:var(--outline);border-radius:6px}
+
+/* Page header */
+.page-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:28px;flex-wrap:wrap}
 .page-title{
   font-family:'Google Sans Display','Google Sans',sans-serif;
-  font-size:28px;font-weight:400;color:var(--on-surface);letter-spacing:-.5px;line-height:1.2;
+  font-size:26px;font-weight:400;color:var(--on-surface);
+  letter-spacing:-.3px;line-height:1.2;
 }
-.page-subtitle{font-size:13px;color:var(--on-surface-variant);margin-top:4px}
+.page-subtitle{font-size:13px;color:var(--on-surface-variant);margin-top:3px;line-height:1.4}
 .page-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 
 /* ============ BUTTONS ============ */
 .btn{
-  display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:var(--radius-full);
-  font-size:14px;font-weight:500;transition:all .15s;white-space:nowrap;letter-spacing:.1px;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:0 20px;height:36px;border-radius:var(--r-full);
+  font-size:14px;font-weight:500;transition:all .15s;
+  white-space:nowrap;letter-spacing:.25px;line-height:1;
 }
-.btn-filled{background:var(--primary);color:#fff;box-shadow:0 1px 3px rgba(26,115,232,.4)}
-.btn-filled:hover{background:var(--primary-dark);box-shadow:0 2px 6px rgba(26,115,232,.5)}
+.btn-filled{background:var(--primary);color:#fff}
+.btn-filled:hover{background:var(--primary-dark);box-shadow:var(--shadow-1)}
 .btn-tonal{background:var(--primary-container);color:var(--on-primary-container)}
 .btn-tonal:hover{background:#c0d8fb}
-.btn-outlined{border:1px solid var(--outline);color:var(--primary);background:transparent}
+.btn-outlined{
+  border:1px solid var(--outline-strong);color:var(--primary);background:transparent;
+  padding:0 19px;
+}
 .btn-outlined:hover{background:var(--primary-light)}
-.btn-text{color:var(--primary);padding:10px 12px}
+.btn-text{color:var(--primary);padding:0 12px}
 .btn-text:hover{background:var(--primary-light)}
-.btn-danger{background:var(--error);color:#fff;box-shadow:0 1px 3px rgba(179,38,30,.4)}
-.btn-danger:hover{background:#c41230}
-.btn-danger-text{color:var(--error);padding:10px 12px}
+.btn-danger{background:var(--error);color:#fff}
+.btn-danger:hover{background:#c41230;box-shadow:var(--shadow-1)}
+.btn-danger-text{color:var(--error);padding:0 12px}
 .btn-danger-text:hover{background:var(--error-light)}
-.btn .material-icons,.btn .material-icons-outlined{font-size:18px}
-.btn-sm{padding:6px 14px;font-size:13px}
+.btn .material-icons,.btn .material-icons-outlined{
+  font-size:18px!important;width:18px;height:18px;max-width:18px;
+}
+.btn-sm{height:30px;padding:0 14px;font-size:13px}
 .btn:active{transform:scale(.98)}
 
 /* ============ CARDS ============ */
 .card{
-  background:var(--surface);border-radius:var(--radius-lg);padding:20px;
-  border:1px solid rgba(0,0,0,.07);margin-bottom:16px;
+  background:#fff;border-radius:var(--r-lg);padding:20px 24px;
+  border:1px solid var(--outline);margin-bottom:16px;
 }
-.card-title{font-size:16px;font-weight:500;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.card-title .material-icons,.card-title .material-icons-outlined{color:var(--primary);font-size:20px}
+.card-title{
+  font-size:14px;font-weight:600;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+  color:var(--on-surface);letter-spacing:.1px;
+}
+.card-title .material-icons,.card-title .material-icons-outlined{
+  color:var(--primary);font-size:18px!important;width:18px;height:18px;max-width:18px;
+}
 
-/* ============ KPI ============ */
+/* ============ KPI CARDS ============ */
 .kpi-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
-  gap:12px;margin-bottom:24px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;margin-bottom:28px;
 }
 .kpi-card{
-  background:var(--surface);padding:20px;border-radius:var(--radius-lg);
-  border:1px solid rgba(0,0,0,.07);
-  display:flex;flex-direction:column;gap:8px;
-  cursor:pointer;transition:transform .15s,box-shadow .15s;
-  overflow:hidden;position:relative;
+  background:#fff;border-radius:var(--r-lg);
+  border:1px solid var(--outline);
+  padding:20px;
+  display:flex;flex-direction:column;gap:6px;
+  cursor:pointer;transition:box-shadow .2s,border-color .2s;
+  position:relative;overflow:hidden;
 }
-.kpi-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--primary);
+.kpi-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:var(--primary);border-radius:0 0 2px 2px;
 }
-.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--elevation-2)}
-.kpi-card.success::before{background:var(--success)}
-.kpi-card.warning::before{background:var(--warning)}
-.kpi-card.error::before{background:var(--error)}
-.kpi-card.neutral::before{background:var(--on-surface-variant)}
+.kpi-card.success::after{background:var(--success)}
+.kpi-card.warning::after{background:var(--warning)}
+.kpi-card.error::after{background:var(--error)}
+.kpi-card.neutral::after{background:var(--outline-strong)}
+.kpi-card:hover{
+  box-shadow:var(--shadow-2);
+  border-color:var(--outline-strong);
+}
+.kpi-icon{
+  width:36px;height:36px;border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-light);margin-bottom:4px;
+}
+.kpi-icon .material-icons,.kpi-icon .material-icons-outlined{
+  color:var(--primary);font-size:18px!important;width:18px;height:18px;max-width:18px;
+}
+.kpi-card.success .kpi-icon{background:var(--success-light)}
+.kpi-card.success .kpi-icon .material-icons{color:var(--success)}
+.kpi-card.warning .kpi-icon{background:var(--warning-light)}
+.kpi-card.warning .kpi-icon .material-icons{color:#a56500}
+.kpi-card.error .kpi-icon{background:var(--error-light)}
+.kpi-card.error .kpi-icon .material-icons{color:var(--error)}
 .kpi-label{font-size:12px;color:var(--on-surface-variant);font-weight:500;letter-spacing:.3px}
-.kpi-value{font-family:'Google Sans Display','Google Sans',sans-serif;font-size:32px;font-weight:400;color:var(--on-surface);line-height:1.1}
-.kpi-hint{font-size:11px;color:var(--on-surface-variant)}
+.kpi-value{
+  font-family:'Google Sans Display','Google Sans',sans-serif;
+  font-size:34px;font-weight:400;color:var(--on-surface);line-height:1;
+}
+.kpi-hint{font-size:11px;color:var(--on-surface-variant);line-height:1.3}
 
 /* ============ CHARTS ============ */
-.chart-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-bottom:20px}
+.chart-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px;margin-bottom:24px}
 .chart-card{
-  background:var(--surface);padding:20px;border-radius:var(--radius-lg);
-  border:1px solid rgba(0,0,0,.07);
+  background:#fff;padding:20px 24px;border-radius:var(--r-lg);
+  border:1px solid var(--outline);
 }
-.chart-card h3{font-size:14px;font-weight:500;margin-bottom:12px;color:var(--on-surface)}
-.chart-wrap{position:relative;height:260px}
+.chart-card h3{
+  font-size:13px;font-weight:600;margin-bottom:16px;
+  color:var(--on-surface-variant);letter-spacing:.3px;text-transform:uppercase;
+}
+.chart-wrap{position:relative;height:240px}
 
 /* ============ TABLES ============ */
 .table-wrap{
-  background:var(--surface);border-radius:var(--radius-lg);
-  border:1px solid rgba(0,0,0,.07);
+  background:#fff;border-radius:var(--r-lg);
+  border:1px solid var(--outline);
   overflow:auto;margin-bottom:16px;
 }
 table{width:100%;border-collapse:collapse;font-size:13px}
-thead{background:var(--surface-variant);position:sticky;top:0;z-index:5}
+thead{background:var(--surface-dim);position:sticky;top:0;z-index:5}
 th{
-  padding:12px 16px;text-align:left;font-weight:600;color:var(--on-surface-variant);
-  font-size:11px;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;
-  border-bottom:1px solid rgba(0,0,0,.08);
+  padding:11px 16px;text-align:left;font-weight:600;
+  color:var(--on-surface-variant);
+  font-size:11px;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap;
+  border-bottom:1px solid var(--outline);
 }
-td{padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.05);vertical-align:top}
+td{
+  padding:12px 16px;border-bottom:1px solid var(--outline);
+  vertical-align:middle;color:var(--on-surface);
+}
 tbody tr{cursor:pointer;transition:background .1s}
-tbody tr:hover{background:#f8faff}
+tbody tr:hover{background:var(--primary-light)}
 tbody tr:last-child td{border-bottom:none}
-.empty-state{text-align:center;padding:56px 24px;color:var(--on-surface-variant)}
-.empty-state .material-icons,.empty-state .material-icons-outlined{font-size:64px;color:var(--outline-variant);margin-bottom:12px}
+.empty-state{
+  text-align:center;padding:60px 24px;color:var(--on-surface-variant);
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.empty-state .material-icons,.empty-state .material-icons-outlined{
+  font-size:48px!important;width:48px;height:48px;max-width:48px;
+  color:var(--outline-strong);
+}
+.empty-state p{font-size:14px;color:var(--on-surface-variant)}
 
-/* ============ CHIPS ============ */
+/* ============ CHIPS / BADGES ============ */
 .chip{
-  display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:var(--radius-full);
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:var(--r-full);
   font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:.3px;
+  line-height:1.4;
 }
 .chip-primary{background:var(--primary-container);color:var(--primary-dark)}
 .chip-success{background:var(--success-light);color:var(--success)}
 .chip-warning{background:var(--warning-light);color:#a56500}
 .chip-error{background:var(--error-light);color:var(--error)}
-.chip-neutral{background:var(--surface-variant);color:var(--on-surface-variant)}
-.priority-urgent{background:#fce8e6;color:#b3261e}
+.chip-neutral{background:var(--surface-dim);color:var(--on-surface-variant)}
+.priority-urgent{background:#fce8e6;color:#c5221f}
 .priority-high{background:#fef7e0;color:#a56500}
 .priority-normal{background:var(--primary-container);color:var(--primary-dark)}
-.priority-low{background:var(--surface-variant);color:var(--on-surface-variant)}
+.priority-low{background:var(--surface-dim);color:var(--on-surface-variant)}
 .tag-chip{
-  display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--radius-full);
-  font-size:11px;font-weight:600;cursor:pointer;transition:all .1s;
+  display:inline-flex;align-items:center;gap:4px;padding:2px 9px;
+  border-radius:var(--r-full);font-size:11px;font-weight:600;
+  cursor:pointer;transition:filter .1s;
   border:1px solid transparent;letter-spacing:.2px;
 }
-.tag-chip.clickable:hover{filter:brightness(.95)}
 .tag-chip.outlined{background:transparent!important;border:1px solid currentColor}
 
-/* ============ FILTER CHIPS (quick filters) ============ */
-.quick-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+/* ============ FILTER CHIPS ============ */
+.quick-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .q-chip{
-  padding:7px 16px;border-radius:var(--radius-full);background:var(--surface);
-  border:1px solid var(--outline-variant);color:var(--on-surface);font-size:13px;font-weight:500;
+  padding:0 16px;height:34px;border-radius:var(--r-full);background:#fff;
+  border:1px solid var(--outline-strong);color:var(--on-surface);font-size:13px;font-weight:500;
   cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;
 }
-.q-chip:hover{background:var(--primary-light)}
-.q-chip.active{background:var(--primary-container);border-color:var(--primary);color:var(--primary-dark)}
+.q-chip:hover{background:var(--primary-light);border-color:var(--primary)}
+.q-chip.active{background:var(--primary-container);border-color:var(--primary);color:var(--on-primary-container);font-weight:600}
 .q-chip .count{font-size:11px;opacity:.7}
 
 /* ============ FILTERS BAR ============ */
 .filters{
-  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:end;
-  background:var(--surface);padding:12px;border-radius:var(--radius-lg);
-  border:1px solid rgba(0,0,0,.07);
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center;
+  background:#fff;padding:10px 12px;border-radius:var(--r-lg);
+  border:1px solid var(--outline);
 }
 .filter-input{
-  padding:8px 14px;border:1px solid var(--outline-variant);border-radius:var(--radius-sm);
-  font-size:13px;min-width:140px;background:var(--surface);outline:none;
-  transition:border-color .15s,box-shadow .15s;
+  padding:7px 12px;border:1px solid var(--outline-strong);border-radius:var(--r-sm);
+  font-size:13px;min-width:140px;background:#fff;outline:none;
+  transition:border-color .15s,box-shadow .15s;color:var(--on-surface);
+  height:36px;
 }
-.filter-input:focus{border-color:var(--primary);border-width:2px;padding:7px 13px;box-shadow:0 0 0 3px rgba(26,115,232,.12)}
+.filter-input:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(26,115,232,.15)}
 .search-box{
   flex:1;min-width:200px;display:flex;align-items:center;
-  background:var(--surface-variant);padding:8px 16px;border-radius:var(--radius-full);gap:8px;
-  border:1px solid transparent;transition:all .15s;
+  background:var(--surface-dim);padding:0 14px;border-radius:var(--r-full);gap:8px;
+  border:1px solid transparent;transition:all .15s;height:36px;
 }
-.search-box:focus-within{background:var(--surface);border-color:var(--primary)}
-.search-box input{flex:1;border:none;background:none;outline:none;font-size:14px}
-.search-box .material-icons,.search-box .material-icons-outlined{color:var(--on-surface-variant);font-size:20px}
+.search-box:focus-within{background:#fff;border-color:var(--primary);box-shadow:0 0 0 2px rgba(26,115,232,.15)}
+.search-box input{flex:1;border:none;background:none;outline:none;font-size:14px;color:var(--on-surface)}
+.search-box .material-icons,.search-box .material-icons-outlined{
+  color:var(--on-surface-variant);font-size:18px!important;width:18px;max-width:18px;
+}
 
 /* ============ FORM ============ */
 .form-group{margin-bottom:20px}
 .form-label{
   display:block;font-size:12px;font-weight:600;margin-bottom:6px;
-  color:var(--on-surface-variant);letter-spacing:.4px;
+  color:var(--on-surface-variant);letter-spacing:.4px;text-transform:uppercase;
 }
 .form-input,.form-select,.form-textarea{
-  width:100%;padding:10px 14px;border:1.5px solid var(--outline-variant);border-radius:var(--radius-sm);
-  font-size:14px;background:var(--surface);outline:none;transition:border-color .15s,box-shadow .15s;
-  font-family:inherit;color:var(--on-surface);
+  width:100%;padding:9px 13px;
+  border:1px solid var(--outline-strong);border-radius:var(--r-sm);
+  font-size:14px;background:#fff;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  font-family:inherit;color:var(--on-surface);height:38px;
 }
-.form-input:hover,.form-select:hover,.form-textarea:hover{border-color:var(--outline)}
+.form-textarea{height:auto;min-height:80px}
+.form-input:hover,.form-select:hover,.form-textarea:hover{border-color:var(--on-surface-variant)}
 .form-input:focus,.form-select:focus,.form-textarea:focus{
-  border-color:var(--primary);border-width:2px;padding:9px 13px;
-  box-shadow:0 0 0 3px rgba(26,115,232,.1);
+  border-color:var(--primary);border-width:2px;
+  box-shadow:0 0 0 2px rgba(26,115,232,.12);
+  padding:8px 12px;
 }
-.form-textarea{resize:vertical;min-height:80px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-.form-hint{font-size:11px;color:var(--on-surface-variant);margin-top:4px}
+.form-textarea{resize:vertical;height:auto;padding:9px 13px}
+.form-textarea:focus{padding:8px 12px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.form-hint{font-size:11px;color:var(--on-surface-variant);margin-top:5px}
 
 /* Tag picker */
 .tag-picker{
-  display:flex;flex-wrap:wrap;gap:6px;padding:8px;border:1.5px solid var(--outline-variant);
-  border-radius:var(--radius-sm);min-height:44px;background:var(--surface);
+  display:flex;flex-wrap:wrap;gap:6px;padding:8px;
+  border:1px solid var(--outline-strong);
+  border-radius:var(--r-sm);min-height:44px;background:#fff;
 }
 .tag-picker .tag-chip{cursor:pointer}
 .tag-picker .tag-chip.outlined{opacity:.5}
@@ -409,52 +600,62 @@ tbody tr:last-child td{border-bottom:none}
 
 /* ============ MODAL ============ */
 .modal-backdrop{
-  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;
+  position:fixed;inset:0;background:rgba(32,33,36,.5);z-index:200;
   display:flex;align-items:center;justify-content:center;padding:16px;
-  animation:fadeIn .2s;backdrop-filter:blur(2px);
+  animation:fadeIn .2s;backdrop-filter:blur(4px);
 }
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{
-  background:var(--surface);border-radius:var(--radius-xl);max-width:720px;width:100%;
-  max-height:92vh;display:flex;flex-direction:column;box-shadow:0 24px 48px rgba(0,0,0,.2);
-  animation:slideUp .25s cubic-bezier(.4,0,.2,1);
+  background:#fff;border-radius:var(--r-xl);max-width:680px;width:100%;
+  max-height:92vh;display:flex;flex-direction:column;
+  box-shadow:0 8px 40px rgba(32,33,36,.25);
+  animation:slideUp .22s var(--ease-std);
 }
-.modal.wide{max-width:960px}
-@keyframes slideUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-header{padding:20px 24px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;gap:12px}
-.modal-header h2{font-size:18px;font-weight:500;flex:1;letter-spacing:-.2px}
+.modal.wide{max-width:900px}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{
+  padding:18px 24px;border-bottom:1px solid var(--outline);
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.modal-header h2{font-size:17px;font-weight:500;flex:1;letter-spacing:-.1px;color:var(--on-surface)}
 .modal-body{padding:20px 24px;overflow-y:auto;flex:1}
-.modal-footer{padding:14px 24px;border-top:1px solid rgba(0,0,0,.08);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.modal-body::-webkit-scrollbar{width:4px}
+.modal-body::-webkit-scrollbar-thumb{background:var(--outline);border-radius:4px}
+.modal-footer{
+  padding:12px 24px;border-top:1px solid var(--outline);
+  display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;flex-shrink:0;
+}
 
 /* ============ FAB ============ */
 .fab{
-  position:fixed;bottom:24px;right:24px;height:56px;border-radius:16px;
+  position:fixed;bottom:28px;right:28px;
+  border-radius:var(--r-lg);
   background:var(--primary);color:#fff;
-  box-shadow:0 3px 12px rgba(26,115,232,.5);z-index:50;
+  box-shadow:var(--shadow-3);z-index:50;
   display:flex;align-items:center;justify-content:center;
-  transition:transform .15s,box-shadow .15s;width:56px;
+  transition:transform .2s var(--ease-std),box-shadow .2s;
+  height:56px;width:56px;
 }
-.fab:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(26,115,232,.6)}
+.fab:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,115,232,.5)}
 .fab:active{transform:scale(.97)}
-.fab .material-icons{font-size:24px}
-.fab-extended{width:auto;padding:0 20px 0 16px;gap:8px;border-radius:16px;font-weight:500;font-size:14px}
+.fab .material-icons{font-size:22px!important;width:22px;height:22px;max-width:22px}
+.fab-extended{width:auto;padding:0 20px 0 16px;gap:8px;font-weight:500;font-size:14px}
 
 /* ============ SNACKBAR ============ */
 .snackbar{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:#1c1b1f;color:#fff;padding:14px 20px;border-radius:var(--radius-sm);
-  box-shadow:0 6px 20px rgba(0,0,0,.3);font-size:14px;z-index:300;max-width:90vw;
-  display:flex;align-items:center;gap:12px;animation:slideUpSnack .25s;
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(0);
+  background:#202124;color:#fff;padding:12px 20px;border-radius:var(--r-md);
+  box-shadow:var(--shadow-3);font-size:14px;z-index:300;max-width:90vw;
+  display:flex;align-items:center;gap:12px;
 }
-@keyframes slideUpSnack{from{transform:translate(-50%,100px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
 .snackbar.success{background:var(--success)}
 .snackbar.error{background:var(--error)}
 
 /* ============ FILE DETAIL ============ */
 .detail-grid{display:grid;grid-template-columns:150px 1fr;gap:10px 16px;margin-bottom:16px;font-size:13px}
-.detail-grid dt{color:var(--on-surface-variant);font-weight:500}
+.detail-grid dt{color:var(--on-surface-variant);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding-top:2px}
 .detail-grid dd{color:var(--on-surface)}
-.timeline{border-left:2px solid var(--outline-variant);padding-left:16px;margin-top:8px}
+.timeline{border-left:2px solid var(--outline);padding-left:16px;margin-top:8px}
 .timeline-item{margin-bottom:14px;position:relative}
 .timeline-item::before{content:'';position:absolute;left:-22px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--primary)}
 .timeline-item.escalate::before{background:var(--error)}
@@ -463,21 +664,21 @@ tbody tr:last-child td{border-bottom:none}
 .timeline-content{font-size:13px;margin-top:2px}
 
 /* Tabs */
-.tabs{display:flex;gap:0;border-bottom:1px solid rgba(0,0,0,.08);margin-bottom:16px;overflow-x:auto}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--outline);margin-bottom:16px;overflow-x:auto}
 .tab{
-  padding:12px 20px;font-size:13px;font-weight:500;color:var(--on-surface-variant);
-  cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;
+  padding:11px 20px;font-size:13px;font-weight:500;color:var(--on-surface-variant);
+  cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;
   transition:all .15s;
 }
-.tab:hover{color:var(--on-surface);background:rgba(0,0,0,.04)}
-.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab:hover{color:var(--on-surface);background:var(--surface-dim)}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
 /* Comments */
 .comments-list{margin-bottom:16px;max-height:300px;overflow-y:auto}
 .comment{
-  background:var(--surface-variant);padding:10px 14px;border-radius:var(--radius-md);
+  background:var(--surface-dim);padding:10px 14px;border-radius:var(--r-md);
   margin-bottom:8px;
 }
 .comment .ch{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;color:var(--on-surface-variant)}
@@ -488,74 +689,81 @@ tbody tr:last-child td{border-bottom:none}
 
 /* Photo upload */
 .photo-uploader{
-  border:2px dashed var(--outline-variant);border-radius:var(--radius-md);padding:24px;
+  border:2px dashed var(--outline-strong);border-radius:var(--r-md);padding:24px;
   text-align:center;cursor:pointer;transition:all .15s;display:block;
 }
 .photo-uploader:hover{border-color:var(--primary);background:var(--primary-light)}
 .photo-uploader input{display:none}
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:12px}
 .photo-thumb{
-  position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;
-  background:var(--surface-variant);cursor:pointer;
+  position:relative;aspect-ratio:1;border-radius:var(--r-sm);overflow:hidden;
+  background:var(--surface-dim);cursor:pointer;
 }
 .photo-thumb img{width:100%;height:100%;object-fit:cover}
 .photo-thumb .photo-remove{
   position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;
   width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;
 }
-.photo-thumb .photo-remove .material-icons{font-size:16px}
+.photo-thumb .photo-remove .material-icons{font-size:16px!important;width:16px;height:16px;max-width:16px}
 
 /* ============ DEPT CARDS ============ */
 .dept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 .dept-card{
-  background:var(--surface);padding:16px;border-radius:var(--radius-lg);
-  border:1px solid rgba(0,0,0,.07);
-  cursor:pointer;transition:all .15s;
-  border-top:3px solid var(--primary);
+  background:#fff;padding:18px;border-radius:var(--r-lg);
+  border:1px solid var(--outline);
+  cursor:pointer;transition:box-shadow .2s,border-color .2s;
+  border-left:4px solid var(--primary);
 }
-.dept-card:hover{transform:translateY(-2px);box-shadow:var(--elevation-2)}
-.dept-card.pending{border-top-color:var(--warning)}
-.dept-card.critical{border-top-color:var(--error)}
-.dept-card.clear{border-top-color:var(--success)}
-.dept-card h4{font-size:14px;font-weight:500;margin-bottom:4px}
+.dept-card:hover{box-shadow:var(--shadow-2);border-color:var(--outline-strong)}
+.dept-card.pending{border-left-color:var(--warning)}
+.dept-card.critical{border-left-color:var(--error)}
+.dept-card.clear{border-left-color:var(--success)}
+.dept-card h4{font-size:14px;font-weight:600;margin-bottom:2px;color:var(--on-surface)}
 .dept-card .dept-cat{font-size:11px;color:var(--on-surface-variant);margin-bottom:12px}
-.dept-card .dept-stats{display:flex;gap:12px;flex-wrap:wrap}
+.dept-card .dept-stats{display:flex;gap:16px;flex-wrap:wrap}
 .dept-stat{display:flex;flex-direction:column}
-.dept-stat .num{font-size:18px;font-weight:500}
-.dept-stat .lbl{font-size:10px;color:var(--on-surface-variant);text-transform:uppercase;letter-spacing:.3px}
+.dept-stat .num{font-size:20px;font-weight:400;font-family:'Google Sans Display','Google Sans',sans-serif}
+.dept-stat .lbl{font-size:10px;color:var(--on-surface-variant);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
 
 /* ============ DAILY REPORT ============ */
 .report-header{
-  background:linear-gradient(135deg,var(--primary) 0%,#4285f4 100%);
-  color:#fff;padding:28px 24px;border-radius:var(--radius-lg);margin-bottom:16px;
-  box-shadow:0 4px 20px rgba(26,115,232,.35);
+  background:var(--primary);
+  color:#fff;padding:24px 28px;border-radius:var(--r-lg);margin-bottom:20px;
+  box-shadow:var(--shadow-2);
 }
-.report-header h2{font-family:'Google Sans Display','Google Sans',sans-serif;font-size:24px;font-weight:400;margin-bottom:6px;letter-spacing:-.3px}
-.report-header p{font-size:13px;opacity:.9}
+.report-header h2{
+  font-family:'Google Sans Display','Google Sans',sans-serif;
+  font-size:22px;font-weight:400;margin-bottom:4px;letter-spacing:-.2px;
+}
+.report-header p{font-size:13px;opacity:.85}
 .report-section{margin-bottom:20px}
 .report-section h3{
-  font-size:16px;font-weight:500;margin-bottom:10px;padding-bottom:6px;
-  border-bottom:2px solid var(--primary);color:var(--primary);
+  font-size:13px;font-weight:600;margin-bottom:12px;padding-bottom:8px;
+  border-bottom:1px solid var(--outline);color:var(--primary);
+  text-transform:uppercase;letter-spacing:.5px;
 }
 
 /* ============ CALENDAR ============ */
-.calendar{background:var(--surface);border-radius:var(--radius-lg);border:1px solid rgba(0,0,0,.07);padding:16px;margin-bottom:16px}
-.cal-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.cal-header h3{flex:1;font-family:'Google Sans Display','Google Sans',sans-serif;font-size:20px;font-weight:400}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-day-name{text-align:center;font-size:11px;font-weight:600;color:var(--on-surface-variant);padding:6px;text-transform:uppercase;letter-spacing:.5px}
+.calendar{background:#fff;border-radius:var(--r-lg);border:1px solid var(--outline);padding:20px;margin-bottom:16px}
+.cal-header{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.cal-header h3{flex:1;font-family:'Google Sans Display','Google Sans',sans-serif;font-size:18px;font-weight:500;color:var(--on-surface)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-day-name{
+  text-align:center;font-size:11px;font-weight:600;color:var(--on-surface-variant);
+  padding:6px 2px;text-transform:uppercase;letter-spacing:.5px;
+}
 .cal-cell{
-  min-height:80px;border:1px solid rgba(0,0,0,.06);border-radius:var(--radius-sm);
+  min-height:76px;border:1px solid var(--outline);border-radius:var(--r-sm);
   padding:6px;font-size:12px;cursor:pointer;transition:background .15s;
-  display:flex;flex-direction:column;gap:3px;
+  display:flex;flex-direction:column;gap:3px;background:#fff;
 }
 .cal-cell:hover{background:var(--primary-light)}
-.cal-cell.other-month{opacity:.3}
+.cal-cell.other-month{opacity:.3;background:var(--surface-dim)}
 .cal-cell.today{background:var(--primary-container);border-color:var(--primary)}
-.cal-cell .cal-date{font-weight:600}
+.cal-cell .cal-date{font-weight:500;color:var(--on-surface)}
 .cal-cell.today .cal-date{
-  background:var(--primary);color:#fff;width:24px;height:24px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:12px;
+  background:var(--primary);color:#fff;width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;
 }
 .cal-cell .cal-item{
   background:var(--primary);color:#fff;padding:2px 6px;border-radius:4px;
@@ -567,33 +775,34 @@ tbody tr:last-child td{border-bottom:none}
 
 /* ============ ACTIVITY FEED ============ */
 .activity-item{
-  display:flex;gap:12px;padding:10px;border-radius:var(--radius-sm);
-  border-bottom:1px solid rgba(0,0,0,.05);cursor:pointer;transition:background .1s;
+  display:flex;gap:12px;padding:10px;border-radius:var(--r-sm);
+  border-bottom:1px solid var(--outline);cursor:pointer;transition:background .1s;
 }
-.activity-item:hover{background:var(--surface-variant)}
+.activity-item:hover{background:var(--surface-dim)}
 .activity-item:last-child{border-bottom:none}
 .activity-icon{
-  width:36px;height:36px;border-radius:50%;background:var(--primary-container);color:var(--primary-dark);
+  width:36px;height:36px;border-radius:50%;
+  background:var(--primary-container);color:var(--primary);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
-.activity-icon .material-icons-outlined{font-size:18px}
+.activity-icon .material-icons-outlined{font-size:18px!important;width:18px;height:18px;max-width:18px}
 .activity-body{flex:1;min-width:0}
 .activity-body .a-title{font-size:13px;font-weight:500;color:var(--on-surface)}
 .activity-body .a-meta{font-size:11px;color:var(--on-surface-variant);margin-top:2px}
 
 /* ============ MEETINGS ============ */
 .meeting-card{
-  background:var(--surface);padding:18px;border-radius:var(--radius-lg);
-  border:1px solid rgba(0,0,0,.07);
-  margin-bottom:12px;border-left:4px solid var(--primary);cursor:pointer;transition:all .15s;
+  background:#fff;padding:16px 20px;border-radius:var(--r-lg);
+  border:1px solid var(--outline);
+  margin-bottom:10px;border-left:4px solid var(--primary);cursor:pointer;transition:all .15s;
 }
-.meeting-card:hover{transform:translateY(-2px);box-shadow:var(--elevation-2)}
-.meeting-card h4{font-size:15px;font-weight:500;margin-bottom:4px}
-.meeting-card .m-meta{font-size:12px;color:var(--on-surface-variant);margin-bottom:8px}
-.meeting-card .m-stats{display:flex;gap:12px;font-size:11px}
+.meeting-card:hover{box-shadow:var(--shadow-2);border-color:var(--outline-strong)}
+.meeting-card h4{font-size:14px;font-weight:600;margin-bottom:3px;color:var(--on-surface)}
+.meeting-card .m-meta{font-size:12px;color:var(--on-surface-variant);margin-bottom:10px}
+.meeting-card .m-stats{display:flex;gap:16px;font-size:11px;color:var(--on-surface-variant)}
 .agenda-item,.action-item{
-  background:var(--surface-variant);padding:10px 14px;border-radius:var(--radius-sm);
-  margin-bottom:8px;
+  background:var(--surface-dim);padding:10px 14px;border-radius:var(--r-sm);
+  margin-bottom:8px;font-size:13px;
 }
 .action-item.done{opacity:.6;text-decoration:line-through}
 .action-item .ai-meta{display:flex;gap:8px;font-size:11px;color:var(--on-surface-variant);margin-top:4px;flex-wrap:wrap}
@@ -601,68 +810,69 @@ tbody tr:last-child td{border-bottom:none}
 /* ============ LOGIN ============ */
 .login-screen{
   position:fixed;inset:0;
-  background:linear-gradient(160deg,#1a73e8 0%,#4285f4 40%,#34a853 100%);
+  background:var(--primary);
   display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;
 }
 .login-box{
-  background:var(--surface);padding:40px 36px;border-radius:28px;
-  max-width:420px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.25);
+  background:#fff;padding:40px 36px;border-radius:var(--r-xl);
+  max-width:400px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.2);
 }
 .login-box h1{
   font-family:'Google Sans Display','Google Sans',sans-serif;
-  font-size:24px;font-weight:400;margin-bottom:4px;text-align:center;letter-spacing:-.3px;
+  font-size:22px;font-weight:400;margin-bottom:4px;text-align:center;letter-spacing:-.2px;
+  color:var(--on-surface);
 }
 .login-box .seal{
-  width:72px;height:72px;border-radius:20px;
-  background:linear-gradient(135deg,#1a73e8,#4285f4);
+  width:64px;height:64px;border-radius:18px;
+  background:var(--primary);
   color:#fff;display:flex;align-items:center;justify-content:center;
-  margin:0 auto 20px;box-shadow:0 8px 24px rgba(26,115,232,.35);
+  margin:0 auto 20px;box-shadow:0 4px 16px rgba(26,115,232,.4);
 }
-.login-box .seal .material-icons{font-size:36px}
-.login-box p{text-align:center;color:var(--on-surface-variant);margin-bottom:28px;font-size:13px}
-.login-divider{
-  border:none;border-top:1px solid var(--outline-variant);
-  margin:20px 0;
-}
+.login-box .seal .material-icons{font-size:32px!important;width:32px;height:32px;max-width:32px}
+.login-box p{text-align:center;color:var(--on-surface-variant);margin-bottom:28px;font-size:13px;line-height:1.5}
+.login-divider{border:none;border-top:1px solid var(--outline);margin:20px 0}
 
-/* ============ COMMAND PALETTE (global search) ============ */
-.cmd-results{margin-top:12px;max-height:420px;overflow-y:auto}
+/* ============ COMMAND PALETTE ============ */
+.cmd-results{margin-top:8px;max-height:420px;overflow-y:auto}
 .cmd-item{
-  padding:12px;border-radius:var(--radius-md);cursor:pointer;
+  padding:10px 12px;border-radius:var(--r-md);cursor:pointer;
   display:flex;align-items:center;gap:12px;transition:background .1s;
 }
 .cmd-item:hover,.cmd-item.selected{background:var(--primary-light)}
 .cmd-item .c-icon{
-  width:36px;height:36px;border-radius:10px;background:var(--primary-container);color:var(--primary-dark);
+  width:34px;height:34px;border-radius:var(--r-sm);
+  background:var(--primary-container);color:var(--primary);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
-.cmd-item .c-icon .material-icons-outlined{font-size:18px}
+.cmd-item .c-icon .material-icons-outlined{font-size:17px!important;width:17px;height:17px;max-width:17px}
 .cmd-item .c-body{flex:1;min-width:0}
-.cmd-item .c-title{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmd-item .c-title{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--on-surface)}
 .cmd-item .c-meta{font-size:11px;color:var(--on-surface-variant);margin-top:2px}
 .cmd-kind{
-  font-size:10px;padding:2px 8px;border-radius:var(--radius-full);background:var(--surface-variant);color:var(--on-surface-variant);
-  text-transform:uppercase;letter-spacing:.3px;
+  font-size:10px;padding:2px 8px;border-radius:var(--r-full);
+  background:var(--surface-dim);color:var(--on-surface-variant);
+  text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;
 }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width:1100px){
-  .global-search{max-width:300px}
+  .global-search{max-width:320px}
   .global-search kbd{display:none}
 }
 @media (max-width:900px){
   .menu-btn{display:inline-flex}
-  .sidebar{transform:translateX(-100%);box-shadow:var(--elevation-3)}
+  .app-bar .brand{min-width:auto;border-right:none;padding:0 8px}
+  .sidebar{transform:translateX(-100%);box-shadow:var(--shadow-3)}
   .sidebar.open{transform:translateX(0)}
   .main{left:0;padding:16px}
-  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:85;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
+  .scrim{position:fixed;inset:0;background:rgba(32,33,36,.5);z-index:85;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
   .scrim.show{opacity:1;pointer-events:auto}
-  .user-chip span{display:none}
+  .user-chip .u-info{display:none}
   .sync-indicator span{display:none}
   .form-row,.form-row-3{grid-template-columns:1fr}
   .chart-row{grid-template-columns:1fr}
   .detail-grid{grid-template-columns:1fr}
-  .detail-grid dt{margin-top:8px;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+  .detail-grid dt{margin-top:8px}
   .page-title{font-size:22px}
   .fab{bottom:16px;right:16px}
   .app-bar h1 .subtitle{display:none}
@@ -670,15 +880,15 @@ tbody tr:last-child td{border-bottom:none}
   .global-search-btn{display:inline-flex!important}
   .cal-cell{min-height:50px;padding:3px;font-size:10px}
   .cal-cell .cal-item{font-size:9px;padding:1px 3px}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:600px){
   .app-bar{padding:0 4px;gap:2px}
-  .app-bar h1{font-size:15px}
-  .kpi-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .app-bar h1{font-size:14px}
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px}
   .kpi-card{padding:14px}
-  .kpi-value{font-size:26px}
+  .kpi-value{font-size:28px}
   .btn .btn-label{display:none}
-  .btn{padding:10px}
   .main{padding:12px}
   .modal{max-height:100vh;border-radius:0;height:100vh;max-width:100%}
   .modal-backdrop{padding:0}
@@ -708,8 +918,12 @@ tbody tr:last-child td{border-bottom:none}
 .flex{display:flex}.flex-1{flex:1}
 .items-center{align-items:center}.justify-between{justify-content:space-between}
 .flex-wrap{flex-wrap:wrap}
-hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
-.spinner{width:36px;height:36px;border:3px solid var(--primary-container);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:32px auto}
+hr.div{border:none;border-top:1px solid var(--outline);margin:16px 0}
+.spinner{
+  width:32px;height:32px;border:3px solid var(--primary-container);
+  border-top-color:var(--primary);border-radius:50%;
+  animation:spin .8s linear infinite;margin:40px auto;
+}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
@@ -717,7 +931,7 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
 
 <!-- ============ BOOT LOADER ============ -->
 <div id="bootLoader">
-  <div class="seal"><span class="material-icons">account_balance</span></div>
+  <div class="seal"><span class="mi mi-lg"><svg viewBox="0 0 24 24" fill="white"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zM11.5 1L2 6v2h19V6l-9.5-5z"/></svg></span></div>
   <h2>Mayiladuthurai District Portal</h2>
   <div class="boot-spinner"></div>
   <p id="bootStatus">Connecting to Firebase…</p>
@@ -726,7 +940,7 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
 <!-- ============ LOGIN ============ -->
 <div id="loginScreen" class="login-screen hidden">
   <div class="login-box">
-    <div class="seal"><span class="material-icons">account_balance</span></div>
+    <div class="seal"><span class="mi mi-lg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zM11.5 1L2 6v2h19V6l-9.5-5z"/></svg></span></div>
     <h1>Mayiladuthurai District Portal</h1>
     <p>Office of the District Collector<br>Please identify yourself to continue</p>
     <div class="form-group">
@@ -753,7 +967,7 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
       </select>
     </div>
     <button class="btn btn-filled" style="width:100%;justify-content:center;margin-top:4px;font-size:15px;padding:14px" data-action="login">
-      <span class="material-icons">login</span> Continue to Portal
+      <span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/></svg></span> Continue to Portal
     </button>
   </div>
 </div>
@@ -761,30 +975,36 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
 <!-- ============ APP BAR ============ -->
 <header class="app-bar hidden" id="appBar">
   <button class="icon-btn menu-btn" data-action="toggleSidebar" aria-label="Menu">
-    <span class="material-icons">menu</span>
+    <span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></span>
   </button>
   <div class="brand">
-    <div class="logo"><span class="material-icons">account_balance</span></div>
-    <h1>Mayiladuthurai District Portal<span class="subtitle">Office of the District Collector</span></h1>
+    <div class="logo"><span class="mi"><svg viewBox="0 0 24 24" fill="white"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zM11.5 1L2 6v2h19V6l-9.5-5z"/></svg></span></div>
+    <h1>MYL District Portal<span class="subtitle">Office of the Collector</span></h1>
   </div>
-  <div class="spacer"></div>
-  <div class="global-search" data-action="openSearch">
-    <span class="material-icons-outlined">search</span>
-    <input id="globalSearch" readonly placeholder="Search files, departments, meetings…" />
-    <kbd>Ctrl K</kbd>
+  <div class="topbar-center">
+    <div class="global-search" data-action="openSearch">
+      <span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
+      <input id="globalSearch" readonly placeholder="Search files, departments, meetings…" />
+      <kbd>⌘K</kbd>
+    </div>
+    <button class="icon-btn global-search-btn" data-action="openSearch" style="display:none" aria-label="Search">
+      <span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
+    </button>
   </div>
-  <button class="icon-btn global-search-btn" data-action="openSearch" style="display:none" aria-label="Search">
-    <span class="material-icons-outlined">search</span>
-  </button>
-  <div id="syncIndicator" class="sync-indicator">
-    <span class="dot"></span><span>Synced</span>
-  </div>
-  <button class="icon-btn" data-action="print" title="Print">
-    <span class="material-icons-outlined">print</span>
-  </button>
-  <div class="user-chip" data-action="logout" title="Click to logout">
-    <div id="userAvatar" class="user-avatar">?</div>
-    <span id="userName">Guest</span>
+  <div class="topbar-right">
+    <div id="syncIndicator" class="sync-indicator">
+      <span class="dot"></span><span>Synced</span>
+    </div>
+    <button class="icon-btn" data-action="print" title="Print">
+      <span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg></span>
+    </button>
+    <div class="user-chip" data-action="logout" title="Click to logout">
+      <div id="userAvatar" class="user-avatar">?</div>
+      <div class="u-info">
+        <span id="userName" class="u-name">Guest</span>
+        <span id="userRoleLabel" class="u-role"></span>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -794,28 +1014,28 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
   <div class="sidebar-section">
     <div class="sidebar-label">Overview</div>
     <div class="nav-item" data-view="dashboard" data-action="navigate" data-param="dashboard">
-      <span class="nav-icon"><span class="material-icons-outlined">dashboard</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg></span>
       <span class="nav-label">Dashboard</span>
     </div>
     <div class="nav-item" data-view="daily-report" data-action="navigate" data-param="daily-report">
-      <span class="nav-icon"><span class="material-icons-outlined">today</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13zM12 10H7v5h5v-5z"/></svg></span>
       <span class="nav-label">Daily Report</span>
     </div>
   </div>
   <div class="sidebar-section">
     <div class="sidebar-label">Files</div>
     <div class="nav-item" data-view="do-files" data-action="navigate" data-param="do-files">
-      <span class="nav-icon"><span class="material-icons-outlined">assignment</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span>
       <span class="nav-label">Daily Orders (DO)</span>
       <span class="badge" id="badge-do">0</span>
     </div>
     <div class="nav-item" data-view="special-files" data-action="navigate" data-param="special-files">
-      <span class="nav-icon"><span class="material-icons-outlined">folder_special</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-2.06 11L15 15.28 12.06 17l.78-3.33-2.59-2.24 3.41-.29L15 8l1.34 3.14 3.41.29-2.59 2.24.78 3.33z"/></svg></span>
       <span class="nav-label">Special Files</span>
       <span class="badge" id="badge-special">0</span>
     </div>
     <div class="nav-item" data-view="press-atr" data-action="navigate" data-param="press-atr">
-      <span class="nav-icon"><span class="material-icons-outlined">newspaper</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3H2v18l4-4h16V3zm-4 11H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg></span>
       <span class="nav-label">Press News ATR</span>
       <span class="badge" id="badge-press">0</span>
     </div>
@@ -823,11 +1043,11 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
   <div class="sidebar-section">
     <div class="sidebar-label">Schedule</div>
     <div class="nav-item" data-view="calendar" data-action="navigate" data-param="calendar">
-      <span class="nav-icon"><span class="material-icons-outlined">calendar_today</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg></span>
       <span class="nav-label">Calendar</span>
     </div>
     <div class="nav-item" data-view="meetings" data-action="navigate" data-param="meetings">
-      <span class="nav-icon"><span class="material-icons-outlined">groups</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span>
       <span class="nav-label">Review Meetings</span>
       <span class="badge warn" id="badge-meet">0</span>
     </div>
@@ -835,15 +1055,15 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
   <div class="sidebar-section">
     <div class="sidebar-label">Reports</div>
     <div class="nav-item" data-view="dept-wise" data-action="navigate" data-param="dept-wise">
-      <span class="nav-icon"><span class="material-icons-outlined">business</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg></span>
       <span class="nav-label">Department-wise</span>
     </div>
     <div class="nav-item" data-view="date-wise" data-action="navigate" data-param="date-wise">
-      <span class="nav-icon"><span class="material-icons-outlined">calendar_month</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7v-5z"/></svg></span>
       <span class="nav-label">Date-wise Reports</span>
     </div>
     <div class="nav-item" data-view="pending" data-action="navigate" data-param="pending">
-      <span class="nav-icon"><span class="material-icons-outlined">pending_actions</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></span>
       <span class="nav-label">Pending Departments</span>
       <span class="badge danger" id="badge-pending">0</span>
     </div>
@@ -851,23 +1071,23 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
   <div class="sidebar-section">
     <div class="sidebar-label">Data</div>
     <div class="nav-item" data-view="departments" data-action="navigate" data-param="departments">
-      <span class="nav-icon"><span class="material-icons-outlined">apartment</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zM7 19H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5v-2h2v2zm4 4H9v-2h2v2zm0-4H9v-2h2v2zm0-4H9V7h2v2zm0-4H9V3h2v2zm4 12h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm0-4h-2V3h2v2zm4 16h-2v-2h2v2zm0-4h-2v-2h2v2z"/></svg></span>
       <span class="nav-label">Departments</span>
     </div>
     <div class="nav-item" data-view="tags" data-action="navigate" data-param="tags">
-      <span class="nav-icon"><span class="material-icons-outlined">sell</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.41l-8.83-8.83c-.37-.37-.88-.58-1.41-.58H4c-1.1 0-2 .9-2 2v7.17c0 .53.21 1.04.59 1.41l8.83 8.83c.78.78 2.05.78 2.83 0l7.17-7.17c.78-.78.78-2.04-.01-2.83zM6.5 8C5.67 8 5 7.33 5 6.5S5.67 5 6.5 5 8 5.67 8 6.5 7.33 8 6.5 8z"/></svg></span>
       <span class="nav-label">Tags</span>
     </div>
     <div class="nav-item" data-action="openBulkImport">
-      <span class="nav-icon"><span class="material-icons-outlined">upload_file</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11 8 15.01z"/></svg></span>
       <span class="nav-label">Bulk Import</span>
     </div>
     <div class="nav-item" data-action="exportAllExcel">
-      <span class="nav-icon"><span class="material-icons-outlined">download</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></span>
       <span class="nav-label">Export Excel</span>
     </div>
     <div class="nav-item" data-action="showAbout">
-      <span class="nav-icon"><span class="material-icons-outlined">info</span></span>
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></span>
       <span class="nav-label">About</span>
     </div>
   </div>
@@ -880,7 +1100,7 @@ hr.div{border:none;border-top:1px solid rgba(0,0,0,.08);margin:16px 0}
 
 <!-- ============ FAB ============ -->
 <button class="fab fab-extended hidden" id="fab" data-action="openAdd">
-  <span class="material-icons">add</span>
+  <span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></span>
   <span class="btn-label">New</span>
 </button>
 
@@ -985,6 +1205,7 @@ async function bootApp() {
   $('bootStatus').textContent='Loading data…';
   ['appBar','sidebar','main','fab'].forEach(id=>$(id).classList.remove('hidden'));
   $('userName').textContent=S.user.name; $('userAvatar').textContent=S.user.name.charAt(0).toUpperCase();
+  const rl=$('userRoleLabel'); if(rl) rl.textContent=S.user.role||'';
   // Populate dept select
   const ds=$('loginDept');
   if(ds&&ds.options.length<=1) DEFAULT_DEPTS.forEach(d=>{ const o=document.createElement('option'); o.value=o.textContent=d; ds.appendChild(o); });
@@ -1065,21 +1286,21 @@ function renderDashboard() {
     <div class="page-subtitle">Welcome, ${escHtml(S.user.name)} · ${S.user.role} · ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
   </div></div>
   <div class="kpi-grid">
-    <div class="kpi-card" onclick="navigate('do-files')"><div class="kpi-label">Open DO Files</div><div class="kpi-value">${doOpen}</div><div class="kpi-hint">of ${doTotal} total</div></div>
-    <div class="kpi-card ${overdue>0?'error':'success'}" onclick="navigate('do-files')"><div class="kpi-label">Overdue Files</div><div class="kpi-value">${overdue}</div><div class="kpi-hint">Past due date</div></div>
-    <div class="kpi-card warning" onclick="navigate('special-files')"><div class="kpi-label">Special Files Open</div><div class="kpi-value">${spOpen}</div><div class="kpi-hint">Awaiting action</div></div>
-    <div class="kpi-card" onclick="navigate('press-atr')"><div class="kpi-label">Press ATR Pending</div><div class="kpi-value">${prPend}</div><div class="kpi-hint">Awaiting reply</div></div>
-    <div class="kpi-card" onclick="navigate('meetings')"><div class="kpi-label">Upcoming Meetings</div><div class="kpi-value">${meetUp}</div><div class="kpi-hint">Scheduled</div></div>
-    <div class="kpi-card ${pending>0?'error':'success'}" onclick="navigate('pending')"><div class="kpi-label">Pending Depts Today</div><div class="kpi-value">${pending}</div><div class="kpi-hint">No DO filed today</div></div>
+    <div class="kpi-card" onclick="navigate('do-files')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span></div><div class="kpi-label">Open DO Files</div><div class="kpi-value">${doOpen}</div><div class="kpi-hint">of ${doTotal} total</div></div>
+    <div class="kpi-card ${overdue>0?'error':'success'}" onclick="navigate('do-files')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg></span></div><div class="kpi-label">Overdue Files</div><div class="kpi-value">${overdue}</div><div class="kpi-hint">Past due date</div></div>
+    <div class="kpi-card warning" onclick="navigate('special-files')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-2.06 11L15 15.28 12.06 17l.78-3.33-2.59-2.24 3.41-.29L15 8l1.34 3.14 3.41.29-2.59 2.24.78 3.33z"/></svg></span></div><div class="kpi-label">Special Files Open</div><div class="kpi-value">${spOpen}</div><div class="kpi-hint">Awaiting action</div></div>
+    <div class="kpi-card" onclick="navigate('press-atr')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3H2v18l4-4h16V3zm-4 11H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg></span></div><div class="kpi-label">Press ATR Pending</div><div class="kpi-value">${prPend}</div><div class="kpi-hint">Awaiting reply</div></div>
+    <div class="kpi-card" onclick="navigate('meetings')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span></div><div class="kpi-label">Upcoming Meetings</div><div class="kpi-value">${meetUp}</div><div class="kpi-hint">Scheduled</div></div>
+    <div class="kpi-card ${pending>0?'error':'success'}" onclick="navigate('pending')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></span></div><div class="kpi-label">Pending Depts Today</div><div class="kpi-value">${pending}</div><div class="kpi-hint">No DO filed today</div></div>
   </div>
   <div class="chart-row">
     <div class="chart-card"><h3>DO Files by Department (Top 8)</h3><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
     <div class="chart-card"><h3>File Status Overview</h3><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div>
   </div>
-  <div class="card"><div class="card-title"><span class="material-icons-outlined">history</span>Recent Activity</div>
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg></span>Recent Activity</div>
     ${recent.length===0?'<div class="empty-state"><p>No records yet</p></div>':recent.map(f=>`
     <div class="activity-item">
-      <div class="activity-icon"><span class="material-icons-outlined">description</span></div>
+      <div class="activity-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span></div>
       <div class="activity-body"><div class="a-title">${escHtml(f.subject||f.title||f.headline||'—')}</div>
       <div class="a-meta">${escHtml(f.department||'')} · ${fmtDt(f.createdAt)}</div></div>
       ${statusChip(f.status)}
@@ -1110,7 +1331,7 @@ function renderDailyReport() {
   return `
   <div class="page-header"><div><div class="page-title">Daily Report</div>
     <div class="page-subtitle">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
-  </div><div class="page-actions"><button class="btn btn-outlined" onclick="window.print()"><span class="material-icons-outlined">print</span> Print</button></div></div>
+  </div><div class="page-actions"><button class="btn btn-outlined" onclick="window.print()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg></span> Print</button></div></div>
   <div class="report-header"><h2>Daily Status Report — Mayiladuthurai District</h2><p>Office of the District Collector · Generated on ${new Date().toLocaleString('en-IN')}</p></div>
   <div class="report-section"><h3>Today's Daily Orders (${todayDO.length})</h3>
     ${todayDO.length===0?'<p class="text-muted">No Daily Orders issued today</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Priority</th><th>Due Date</th><th>Status</th></tr></thead><tbody>
@@ -1140,7 +1361,7 @@ function renderDoFiles() {
   return `
   <div class="page-header"><div><div class="page-title">Daily Orders (DO Files)</div><div class="page-subtitle">${files.length} of ${S.data.doFiles.length} files</div></div></div>
   <div class="filters">
-    <div class="search-box" style="flex:1;min-width:180px"><span class="material-icons-outlined">search</span>
+    <div class="search-box" style="flex:1;min-width:180px"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
       <input placeholder="Search…" value="${escHtml(doSearch)}" oninput="doSearch=this.value;renderView('do-files')"></div>
     <select class="filter-input" onchange="doStatus=this.value;renderView('do-files')">
       <option value="all">All Status</option><option value="open" ${doStatus==='open'?'selected':''}>Open</option>
@@ -1159,7 +1380,7 @@ function renderDoFiles() {
   </div>
   <div class="table-wrap"><table>
     <thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Date Issued</th><th>Due Date</th><th>Priority</th><th>Status</th><th>Tags</th><th></th></tr></thead>
-    <tbody>${files.length===0?`<tr><td colspan="9"><div class="empty-state"><span class="material-icons-outlined">assignment</span><p>No files found</p></div></td></tr>`:
+    <tbody>${files.length===0?`<tr><td colspan="9"><div class="empty-state"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span><p>No files found</p></div></td></tr>`:
     files.map(f=>{ const dl=daysLeft(f.dueDate); const dc=dl!==null&&dl<0&&f.status!=='closed'?'color:var(--error);font-weight:500':'';
     return `<tr onclick="openDoDetail('${f.id}')">
       <td><strong>${escHtml(f.doNumber||'—')}</strong></td><td>${escHtml(f.subject||'—')}</td>
@@ -1176,7 +1397,7 @@ function renderDoFiles() {
 function openDoDetail(id) {
   const f=S.data.doFiles.find(x=>x.id===id); if(!f) return;
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">DO File — ${escHtml(f.doNumber||'—')}</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body"><dl class="detail-grid">
       <dt>DO Number</dt><dd>${escHtml(f.doNumber||'—')}</dd><dt>Subject</dt><dd>${escHtml(f.subject||'—')}</dd>
       <dt>Department</dt><dd>${escHtml(f.department||'—')}</dd><dt>Date Issued</dt><dd>${f.dateIssued||fmt(f.createdAt)}</dd>
@@ -1197,7 +1418,7 @@ function openDoEdit(id) {
   const depts=S.data.departments.map(d=>d.name).sort();
   const tagOpts=S.data.tags.map(t=>`<label style="display:inline-flex;align-items:center;gap:4px;margin:3px;cursor:pointer"><input type="checkbox" value="${t.id}" ${(f.tags||[]).includes(t.id)?'checked':''}><span class="tag-chip" style="background:${t.bg};color:${t.fg}">${escHtml(t.name)}</span></label>`).join('');
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} DO File</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <div class="form-row">
         <div class="form-group"><label class="form-label">DO Number</label><input id="mDoNum" class="form-input" value="${escHtml(f.doNumber||'')}" placeholder="DO/2025/001"></div>
@@ -1216,7 +1437,7 @@ function openDoEdit(id) {
       <div class="form-group"><label class="form-label">Remarks</label><textarea id="mDoRem" class="form-textarea" rows="3">${escHtml(f.remarks||'')}</textarea></div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-filled" onclick="saveDoFile('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+      <button class="btn btn-filled" onclick="saveDoFile('${id||''}')"><span class="mi">${id?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>'}</span> ${id?'Save':'Create'}</button>
     </div></div>`);
 }
 
@@ -1241,7 +1462,7 @@ function renderSpecialFiles() {
   if(spStatus!=='all') files=files.filter(f=>(f.status||'open')===spStatus);
   return `
   <div class="page-header"><div><div class="page-title">Special Files</div><div class="page-subtitle">${files.length} of ${S.data.specialFiles.length} files</div></div></div>
-  <div class="filters"><div class="search-box" style="flex:1"><span class="material-icons-outlined">search</span>
+  <div class="filters"><div class="search-box" style="flex:1"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
     <input placeholder="Search…" value="${escHtml(spSearch)}" oninput="spSearch=this.value;renderView('special-files')"></div>
     <select class="filter-input" onchange="spStatus=this.value;renderView('special-files')">
       <option value="all">All Status</option><option value="open" ${spStatus==='open'?'selected':''}>Open</option>
@@ -1251,7 +1472,7 @@ function renderSpecialFiles() {
     </select>
   </div>
   <div class="table-wrap"><table><thead><tr><th>File No.</th><th>Title</th><th>Department</th><th>Date</th><th>Priority</th><th>Status</th><th>Tags</th><th></th></tr></thead>
-  <tbody>${files.length===0?`<tr><td colspan="8"><div class="empty-state"><span class="material-icons-outlined">folder_special</span><p>No files found</p></div></td></tr>`:
+  <tbody>${files.length===0?`<tr><td colspan="8"><div class="empty-state"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-2.06 11L15 15.28 12.06 17l.78-3.33-2.59-2.24 3.41-.29L15 8l1.34 3.14 3.41.29-2.59 2.24.78 3.33z"/></svg></span><p>No files found</p></div></td></tr>`:
   files.map(f=>`<tr onclick="openSpDetail('${f.id}')"><td><strong>${escHtml(f.fileNo||'—')}</strong></td><td>${escHtml(f.title||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${f.dateCreated||fmt(f.createdAt)}</td><td>${priorityChip(f.priority)}</td><td>${statusChip(f.status||'open')}</td><td>${tagBadges(f.tags)}</td><td><button class="btn btn-text btn-sm" onclick="event.stopPropagation();openSpEdit('${f.id}')">Edit</button></td></tr>`).join('')}
   </tbody></table></div>`;
 }
@@ -1259,7 +1480,7 @@ function renderSpecialFiles() {
 function openSpDetail(id) {
   const f=S.data.specialFiles.find(x=>x.id===id); if(!f) return;
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">Special File — ${escHtml(f.fileNo||f.title||'—')}</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body"><dl class="detail-grid">
       <dt>File No.</dt><dd>${escHtml(f.fileNo||'—')}</dd><dt>Title</dt><dd>${escHtml(f.title||'—')}</dd>
       <dt>Department</dt><dd>${escHtml(f.department||'—')}</dd><dt>Date</dt><dd>${f.dateCreated||fmt(f.createdAt)}</dd>
@@ -1279,7 +1500,7 @@ function openSpEdit(id) {
   const depts=S.data.departments.map(d=>d.name).sort();
   const tagOpts=S.data.tags.map(t=>`<label style="display:inline-flex;align-items:center;gap:4px;margin:3px;cursor:pointer"><input type="checkbox" value="${t.id}" ${(f.tags||[]).includes(t.id)?'checked':''}><span class="tag-chip" style="background:${t.bg};color:${t.fg}">${escHtml(t.name)}</span></label>`).join('');
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Special File</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <div class="form-row"><div class="form-group"><label class="form-label">File No.</label><input id="mSpNo" class="form-input" value="${escHtml(f.fileNo||'')}"></div>
         <div class="form-group"><label class="form-label">Date</label><input id="mSpDate" type="date" class="form-input" value="${f.dateCreated||today()}"></div></div>
@@ -1292,7 +1513,7 @@ function openSpEdit(id) {
       <div class="form-group"><label class="form-label">Notes</label><textarea id="mSpNotes" class="form-textarea">${escHtml(f.notes||'')}</textarea></div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-filled" onclick="saveSpFile('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+      <button class="btn btn-filled" onclick="saveSpFile('${id||''}')"><span class="mi">${id?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>'}</span> ${id?'Save':'Create'}</button>
     </div></div>`);
 }
 
@@ -1317,7 +1538,7 @@ function renderPressAtr() {
   if(prStatus!=='all') files=files.filter(f=>(f.status||'open')===prStatus);
   return `
   <div class="page-header"><div><div class="page-title">Press News ATR</div><div class="page-subtitle">${files.length} of ${S.data.pressAtr.length} items</div></div></div>
-  <div class="filters"><div class="search-box" style="flex:1"><span class="material-icons-outlined">search</span>
+  <div class="filters"><div class="search-box" style="flex:1"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
     <input placeholder="Search…" value="${escHtml(prSearch)}" oninput="prSearch=this.value;renderView('press-atr')"></div>
     <select class="filter-input" onchange="prStatus=this.value;renderView('press-atr')">
       <option value="all">All Status</option><option value="open" ${prStatus==='open'?'selected':''}>Open</option>
@@ -1326,7 +1547,7 @@ function renderPressAtr() {
     </select>
   </div>
   <div class="table-wrap"><table><thead><tr><th>Date</th><th>Headline</th><th>Source</th><th>Department</th><th>Status</th><th>ATR Remarks</th><th></th></tr></thead>
-  <tbody>${files.length===0?`<tr><td colspan="7"><div class="empty-state"><span class="material-icons-outlined">newspaper</span><p>No press ATR found</p></div></td></tr>`:
+  <tbody>${files.length===0?`<tr><td colspan="7"><div class="empty-state"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3H2v18l4-4h16V3zm-4 11H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg></span><p>No press ATR found</p></div></td></tr>`:
   files.map(f=>`<tr onclick="openPrDetail('${f.id}')"><td>${f.dateReceived||fmt(f.createdAt)}</td><td>${escHtml(f.headline||'—')}</td><td>${escHtml(f.source||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${statusChip(f.status||'open')}</td><td>${escHtml((f.atrRemarks||'').slice(0,60))}</td><td><button class="btn btn-text btn-sm" onclick="event.stopPropagation();openPrEdit('${f.id}')">Edit</button></td></tr>`).join('')}
   </tbody></table></div>`;
 }
@@ -1334,7 +1555,7 @@ function renderPressAtr() {
 function openPrDetail(id) {
   const f=S.data.pressAtr.find(x=>x.id===id); if(!f) return;
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">Press ATR Detail</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body"><dl class="detail-grid">
       <dt>Date</dt><dd>${f.dateReceived||fmt(f.createdAt)}</dd><dt>Headline</dt><dd>${escHtml(f.headline||'—')}</dd>
       <dt>Source</dt><dd>${escHtml(f.source||'—')}</dd><dt>Department</dt><dd>${escHtml(f.department||'—')}</dd>
@@ -1352,7 +1573,7 @@ function openPrEdit(id) {
   const f=id?S.data.pressAtr.find(x=>x.id===id)||{}:{};
   const depts=S.data.departments.map(d=>d.name).sort();
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Press ATR</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <div class="form-row"><div class="form-group"><label class="form-label">Date Received</label><input id="mPrDate" type="date" class="form-input" value="${f.dateReceived||today()}"></div>
         <div class="form-group"><label class="form-label">Source / Publication</label><input id="mPrSrc" class="form-input" value="${escHtml(f.source||'')}" placeholder="e.g. The Hindu"></div></div>
@@ -1363,7 +1584,7 @@ function openPrEdit(id) {
       <div class="form-group"><label class="form-label">Status</label><select id="mPrStatus" class="form-select"><option value="open" ${!f.status||f.status==='open'?'selected':''}>Open</option><option value="pending" ${f.status==='pending'?'selected':''}>Pending</option><option value="replied" ${f.status==='replied'?'selected':''}>Replied</option></select></div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-filled" onclick="savePrFile('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+      <button class="btn btn-filled" onclick="savePrFile('${id||''}')"><span class="mi">${id?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>'}</span> ${id?'Save':'Create'}</button>
     </div></div>`);
 }
 
@@ -1386,7 +1607,7 @@ function renderMeetings() {
   if(meetSearch) meets=meets.filter(m=>(m.title+m.venue+'').toLowerCase().includes(meetSearch.toLowerCase()));
   const upcoming=meets.filter(m=>m.date>=today()).sort((a,b)=>a.date.localeCompare(b.date));
   const past=meets.filter(m=>m.date<today()).sort((a,b)=>b.date.localeCompare(a.date));
-  const rm=arr=>arr.length===0?'<div class="empty-state"><span class="material-icons-outlined">groups</span><p>No meetings</p></div>':arr.map(m=>`
+  const rm=arr=>arr.length===0?'<div class="empty-state"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span><p>No meetings</p></div>':arr.map(m=>`
     <div class="meeting-card" onclick="openMeetDetail('${m.id}')">
       <div style="display:flex;align-items:start;justify-content:space-between;gap:8px"><h4>${escHtml(m.title||'—')}</h4>${m.date===today()?'<span class="chip chip-error">Today</span>':''}</div>
       <div class="m-meta">${m.date||'—'}${m.time?` · ${m.time}`:''}${m.venue?` · ${escHtml(m.venue)}`:''}</div>
@@ -1394,16 +1615,16 @@ function renderMeetings() {
     </div>`).join('');
   return `
   <div class="page-header"><div><div class="page-title">Review Meetings</div><div class="page-subtitle">${upcoming.length} upcoming · ${past.length} past</div></div></div>
-  <div class="filters"><div class="search-box" style="flex:1"><span class="material-icons-outlined">search</span>
+  <div class="filters"><div class="search-box" style="flex:1"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
     <input placeholder="Search meetings…" value="${escHtml(meetSearch)}" oninput="meetSearch=this.value;renderView('meetings')"></div></div>
-  <div class="card"><div class="card-title"><span class="material-icons-outlined">upcoming</span>Upcoming</div>${rm(upcoming)}</div>
-  <div class="card"><div class="card-title"><span class="material-icons-outlined">history</span>Past Meetings</div>${rm(past)}</div>`;
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg></span>Upcoming</div>${rm(upcoming)}</div>
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg></span>Past Meetings</div>${rm(past)}</div>`;
 }
 
 function openMeetDetail(id) {
   const m=S.data.meetings.find(x=>x.id===id); if(!m) return;
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${escHtml(m.title||'Meeting')}</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <dl class="detail-grid"><dt>Date</dt><dd>${m.date||'—'}</dd><dt>Time</dt><dd>${m.time||'—'}</dd>
         <dt>Venue</dt><dd>${escHtml(m.venue||'—')}</dd><dt>Chaired By</dt><dd>${escHtml(m.chairedBy||'—')}</dd>
@@ -1424,7 +1645,7 @@ function openMeetEdit(id) {
   const m=id?S.data.meetings.find(x=>x.id===id)||{}:{};
   const depts=S.data.departments.map(d=>d.name).sort();
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Meeting</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <div class="form-group"><label class="form-label">Title *</label><input id="mMTitle" class="form-input" value="${escHtml(m.title||'')}"></div>
       <div class="form-row"><div class="form-group"><label class="form-label">Date *</label><input id="mMDate" type="date" class="form-input" value="${m.date||today()}"></div>
@@ -1440,7 +1661,7 @@ function openMeetEdit(id) {
       <div class="form-group"><label class="form-label">Minutes / Notes</label><textarea id="mMMinutes" class="form-textarea" rows="4">${escHtml(m.minutes||'')}</textarea></div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-filled" onclick="saveMeeting('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+      <button class="btn btn-filled" onclick="saveMeeting('${id||''}')"><span class="mi">${id?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>'}</span> ${id?'Save':'Create'}</button>
     </div></div>`);
 }
 
@@ -1481,12 +1702,12 @@ function renderCalendar() {
   }
   return `
   <div class="page-header"><div><div class="page-title">Calendar</div></div>
-    <div class="page-actions"><button class="btn btn-outlined" onclick="navigate('meetings')"><span class="material-icons-outlined">groups</span> All Meetings</button></div></div>
+    <div class="page-actions"><button class="btn btn-outlined" onclick="navigate('meetings')"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span> All Meetings</button></div></div>
   <div class="calendar">
     <div class="cal-header">
-      <button class="icon-btn" onclick="calNav(-1)"><span class="material-icons">chevron_left</span></button>
+      <button class="icon-btn" onclick="calNav(-1)"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></span></button>
       <h3>${monthName}</h3>
-      <button class="icon-btn" onclick="calNav(1)"><span class="material-icons">chevron_right</span></button>
+      <button class="icon-btn" onclick="calNav(1)"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span></button>
       <button class="btn btn-text btn-sm" onclick="S.calMonth=new Date();renderView('calendar')">Today</button>
     </div>
     <div class="cal-grid">
@@ -1500,7 +1721,7 @@ function calDayClick(ds){
   const evDO=S.data.doFiles.filter(f=>f.dueDate===ds), evMeet=S.data.meetings.filter(m=>m.date===ds);
   if(!evDO.length&&!evMeet.length) return;
   openModal(`<div class="modal"><div class="modal-header"><h2 class="modal-title">Events on ${ds}</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       ${evMeet.length?`<h4 style="margin-bottom:8px">Meetings</h4>${evMeet.map(m=>`<div class="meeting-card" onclick="closeModal();openMeetDetail('${m.id}')">${escHtml(m.title)} · ${m.time||''}</div>`).join('')}`:''}
       ${evDO.length?`<h4 style="margin:12px 0 8px">DO Files Due</h4>${evDO.map(f=>`<div class="agenda-item" onclick="closeModal();openDoDetail('${f.id}')"><strong>${escHtml(f.doNumber||'—')}</strong> — ${escHtml(f.subject||'')}<br><small>${escHtml(f.department||'')} · ${statusChip(f.status)}</small></div>`).join('')}`:''}
@@ -1532,7 +1753,7 @@ function openDeptDrill(dept) {
   const dos=S.data.doFiles.filter(f=>f.department===dept);
   const pr=S.data.pressAtr.filter(f=>f.department===dept);
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${escHtml(dept)}</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <h4 style="margin-bottom:8px">DO Files (${dos.length})</h4>
       ${dos.length===0?'<p class="text-muted">None</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Due</th><th>Status</th></tr></thead><tbody>
@@ -1552,14 +1773,14 @@ function renderDateWise() {
   return `
   <div class="page-header"><div><div class="page-title">Date-wise Report</div></div>
     <div class="page-actions"><input type="date" class="filter-input" value="${dwDate}" onchange="dwDate=this.value;renderView('date-wise')" style="width:auto"></div></div>
-  <div class="card"><div class="card-title"><span class="material-icons-outlined">assignment</span>DO Files (${files.length})</div>
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span>DO Files (${files.length})</div>
     ${files.length===0?'<p class="text-muted">No DO files for this date</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Priority</th><th>Status</th></tr></thead><tbody>
     ${files.map(f=>`<tr onclick="openDoDetail('${f.id}')"><td>${escHtml(f.doNumber||'—')}</td><td>${escHtml(f.subject||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${priorityChip(f.priority)}</td><td>${statusChip(f.status||'open')}</td></tr>`).join('')}</tbody></table></div>`}
   </div>
-  <div class="card"><div class="card-title"><span class="material-icons-outlined">groups</span>Meetings (${meets.length})</div>
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span>Meetings (${meets.length})</div>
     ${meets.length===0?'<p class="text-muted">No meetings</p>':meets.map(m=>`<div class="meeting-card" onclick="openMeetDetail('${m.id}')"><h4>${escHtml(m.title||'—')}</h4><div class="m-meta">${m.time||''} · ${escHtml(m.venue||'')}</div></div>`).join('')}
   </div>
-  <div class="card"><div class="card-title"><span class="material-icons-outlined">newspaper</span>Press ATR (${press.length})</div>
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3H2v18l4-4h16V3zm-4 11H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg></span>Press ATR (${press.length})</div>
     ${press.length===0?'<p class="text-muted">None</p>':press.map(p=>`<div class="activity-item"><div class="activity-body"><div class="a-title">${escHtml(p.headline||'—')}</div><div class="a-meta">${escHtml(p.source||'')} · ${statusChip(p.status)}</div></div></div>`).join('')}
   </div>`;
 }
@@ -1572,10 +1793,10 @@ function renderPending() {
   const pending=allDepts.filter(d=>!filed.has(d)), done=allDepts.filter(d=>filed.has(d));
   return `
   <div class="page-header"><div><div class="page-title">Pending Departments</div><div class="page-subtitle">${pending.length} pending · ${done.length} filed today</div></div></div>
-  <div class="card" style="border-left:4px solid var(--error)"><div class="card-title"><span class="material-icons-outlined">pending_actions</span>Not Filed Today (${pending.length})</div>
+  <div class="card" style="border-left:4px solid var(--error)"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></span>Not Filed Today (${pending.length})</div>
     ${pending.length===0?'<p style="color:var(--success)">✓ All departments have filed today!</p>':`<div style="display:flex;flex-wrap:wrap;gap:8px">${pending.map(d=>`<span class="chip chip-error">${escHtml(d)}</span>`).join('')}</div>`}
   </div>
-  <div class="card" style="border-left:4px solid var(--success)"><div class="card-title"><span class="material-icons-outlined">check_circle</span>Filed Today (${done.length})</div>
+  <div class="card" style="border-left:4px solid var(--success)"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg></span>Filed Today (${done.length})</div>
     <div style="display:flex;flex-wrap:wrap;gap:8px">${done.map(d=>`<span class="chip chip-success">${escHtml(d)}</span>`).join('')}</div>
   </div>`;
 }
@@ -1596,13 +1817,13 @@ function renderDepartments() {
 function openDeptEdit(id) {
   const d=id?S.data.departments.find(x=>x.id===id)||{}:{};
   openModal(`<div class="modal"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Department</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <div class="form-group"><label class="form-label">Name *</label><input id="mDName" class="form-input" value="${escHtml(d.name||'')}"></div>
       <div class="form-group"><label class="form-label">Category</label><select id="mDCat" class="form-select">${['General','Revenue','Development','Infrastructure','Social','Law & Order'].map(c=>`<option ${d.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-filled" onclick="saveDept('${id||''}')"><span class="material-icons">${id?'save':'add'}</span> ${id?'Save':'Create'}</button>
+      <button class="btn btn-filled" onclick="saveDept('${id||''}')"><span class="mi">${id?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>'}</span> ${id?'Save':'Create'}</button>
     </div></div>`);
 }
 
@@ -1623,7 +1844,7 @@ function renderTags() {
   <div class="card"><div style="display:flex;flex-wrap:wrap;gap:10px">
     ${S.data.tags.map(t=>`<div style="display:flex;align-items:center;gap:6px;background:var(--surface-variant);padding:6px 12px;border-radius:999px">
       <span class="tag-chip" style="background:${t.bg};color:${t.fg}">${escHtml(t.name)}</span>
-      <button class="icon-btn" style="width:24px;height:24px" onclick="deleteRecord('tags','${t.id}')"><span class="material-icons" style="font-size:14px">close</span></button>
+      <button class="icon-btn" style="width:24px;height:24px" onclick="deleteRecord('tags','${t.id}')"><span class="mi" style="width:14px;height:14px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button>
     </div>`).join('')}
     ${S.data.tags.length===0?'<p class="text-muted">No tags yet.</p>':''}
   </div></div>`;
@@ -1631,7 +1852,7 @@ function renderTags() {
 
 function openTagEdit() {
   openModal(`<div class="modal"><div class="modal-header"><h2 class="modal-title">New Tag</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <div class="form-group"><label class="form-label">Tag Name *</label><input id="mTName" class="form-input" placeholder="e.g. CM Cell, Urgent"></div>
       <div class="form-group"><label class="form-label">Color</label><div style="display:flex;flex-wrap:wrap;gap:8px">
@@ -1639,7 +1860,7 @@ function openTagEdit() {
       </div></div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-filled" onclick="saveTag()"><span class="material-icons">add</span> Create</button>
+      <button class="btn btn-filled" onclick="saveTag()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></span> Create</button>
     </div></div>`);
 }
 
@@ -1665,9 +1886,9 @@ let searchOpen=false;
 function openSearch() {
   if(searchOpen) return; searchOpen=true;
   openModal(`<div class="modal wide"><div class="modal-header">
-    <span class="material-icons-outlined" style="color:var(--on-surface-variant)">search</span>
+    <span class="mi" style="color:var(--on-surface-variant)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
     <input id="cmdInput" style="flex:1;border:none;outline:none;font-size:16px;background:none" placeholder="Search files, meetings…" autocomplete="off">
-    <button class="icon-btn" onclick="closeSearch()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeSearch()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body" id="cmdResults" style="padding-top:0"><div class="text-muted text-center" style="padding:24px">Start typing…</div></div>
   </div>`,()=>{ searchOpen=false; });
   const inp=$('cmdInput'); inp.focus();
@@ -1681,7 +1902,7 @@ function openSearch() {
       ...S.data.meetings.map(m=>({type:'Meeting',icon:'groups',label:m.title,sub:m.date,action:()=>{ closeSearch(); openMeetDetail(m.id); }})),
     ].filter(h=>(h.label||'').toLowerCase().includes(q)||(h.sub||'').toLowerCase().includes(q));
     res.innerHTML=hits.length===0?'<div class="text-muted text-center" style="padding:24px">No results</div>':
-      `<div class="cmd-results">${hits.slice(0,10).map((h,i)=>`<div class="cmd-item" data-i="${i}"><div class="c-icon"><span class="material-icons-outlined">${h.icon}</span></div><div class="c-body"><div class="c-title">${escHtml(h.label||'—')}</div><div class="c-meta">${h.type} · ${escHtml(h.sub||'')}</div></div></div>`).join('')}</div>`;
+      `<div class="cmd-results">${hits.slice(0,10).map((h,i)=>`<div class="cmd-item" data-i="${i}"><div class="c-icon"><span class="mi">${window.ICON_SVGS[h.icon]||window.ICON_SVGS['description']}</span></div><div class="c-body"><div class="c-title">${escHtml(h.label||'—')}</div><div class="c-meta">${h.type} · ${escHtml(h.sub||'')}</div></div></div>`).join('')}</div>`;
     res.querySelectorAll('.cmd-item').forEach((el,i)=>el.addEventListener('click',()=>hits[i].action()));
   });
 }
@@ -1702,14 +1923,14 @@ function exportAllExcel() {
 // BULK IMPORT
 function openBulkImport() {
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">Bulk Import DO Files</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body">
       <p class="text-muted" style="margin-bottom:12px">Columns: <strong>DO Number, Subject, Department, Date Issued, Due Date, Priority, Status, Remarks</strong></p>
       <div class="form-group"><label class="form-label">Excel File (.xlsx)</label><input type="file" id="importFile" accept=".xlsx,.xls" class="form-input"></div>
       <div id="importPreview"></div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-filled" id="importBtn" onclick="doImport()" disabled><span class="material-icons">upload</span> Import</button>
+      <button class="btn btn-filled" id="importBtn" onclick="doImport()" disabled><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg></span> Import</button>
     </div></div>`);
   $('importFile').addEventListener('change',e=>{
     const file=e.target.files[0]; if(!file) return;
@@ -1729,9 +1950,9 @@ async function doImport() {
 // ABOUT
 function showAbout() {
   openModal(`<div class="modal"><div class="modal-header"><h2 class="modal-title">About</h2>
-    <button class="icon-btn" onclick="closeModal()"><span class="material-icons">close</span></button></div>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
     <div class="modal-body" style="text-align:center;padding:32px 24px">
-      <div style="width:72px;height:72px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><span class="material-icons" style="font-size:40px">account_balance</span></div>
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><span class="mi" style="width:40px;height:40px"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zM11.5 1L2 6v2h19V6l-9.5-5z"/></svg></span></div>
       <h2 style="font-size:20px;margin-bottom:4px">Mayiladuthurai District Portal</h2>
       <p class="text-muted">Office of the District Collector</p>
       <p style="margin:16px 0;font-size:13px;color:var(--on-surface-variant)">Unified portal for DO file tracking, press ATR, review meetings, and district-wide reporting.</p>
