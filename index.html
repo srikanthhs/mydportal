@@ -53,6 +53,10 @@ const ICONS = {
   chevron_right: `<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>`,
   open_in_new: `<svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>`,
   upload: `<svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>`,
+  gavel: `<svg viewBox="0 0 24 24"><path d="M1 21h12v2H1zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828zM12.317 1l5.657 5.656-2.83 2.83-5.654-5.66zM3.825 9.485l5.657 5.657-2.828 2.828-5.657-5.657z"/></svg>`,
+  camera_alt: `<svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>`,
+  balance: `<svg viewBox="0 0 24 24"><path d="M13 7.83c.85-.3 1.53-.98 1.83-1.83H18l-3 7c0 1.66 1.57 3 3.5 3s3.5-1.34 3.5-3l-3-7h2V4h-6.17c-.41-1.16-1.51-2-2.83-2s-2.42.84-2.83 2H3v2h2l-3 7c0 1.66 1.57 3 3.5 3S9 14.66 9 13L6 6h3.17c.3.85.98 1.53 1.83 1.83V19H2v2h20v-2h-9V7.83zM20.5 13h-3l1.5-3.5 1.5 3.5zm-13 0h-3l1.5-3.5 1.5 3.5zM12 6c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>`,
+  verified: `<svg viewBox="0 0 24 24"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82 1.89 3.2L12 21.04l3.4 1.46 1.89-3.2 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>`,
 };
 
 /* Render an icon by name into HTML string */
@@ -1026,7 +1030,7 @@ hr.div{border:none;border-top:1px solid var(--outline);margin:16px 0}
     <div class="sidebar-label">Files</div>
     <div class="nav-item" data-view="do-files" data-action="navigate" data-param="do-files">
       <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span>
-      <span class="nav-label">Daily Orders (DO)</span>
+      <span class="nav-label">Demi Official Orders</span>
       <span class="badge" id="badge-do">0</span>
     </div>
     <div class="nav-item" data-view="special-files" data-action="navigate" data-param="special-files">
@@ -1050,6 +1054,14 @@ hr.div{border:none;border-top:1px solid var(--outline);margin:16px 0}
       <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span>
       <span class="nav-label">Review Meetings</span>
       <span class="badge warn" id="badge-meet">0</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Legal</div>
+    <div class="nav-item" data-view="court-cases" data-action="navigate" data-param="court-cases">
+      <span class="nav-icon mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h12v2H1zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828zM12.317 1l5.657 5.656-2.83 2.83-5.654-5.66zM3.825 9.485l5.657 5.657-2.828 2.828-5.657-5.657z"/></svg></span>
+      <span class="nav-label">Court Monitoring</span>
+      <span class="badge" id="badge-court">0</span>
     </div>
   </div>
   <div class="sidebar-section">
@@ -1130,7 +1142,7 @@ const db  = getFirestore(app);
 
 const S = {
   user: null, view: 'dashboard',
-  data: { doFiles:[], specialFiles:[], pressAtr:[], meetings:[], departments:[], tags:[] },
+  data: { doFiles:[], specialFiles:[], pressAtr:[], meetings:[], departments:[], tags:[], courtCases:[] },
   unsubs: [], calMonth: new Date()
 };
 
@@ -1213,7 +1225,7 @@ async function bootApp() {
 }
 
 function subscribeAll() {
-  const cols=[['doFiles','createdAt'],['specialFiles','createdAt'],['pressAtr','createdAt'],['meetings','date'],['departments','name'],['tags','name']];
+  const cols=[['doFiles','createdAt'],['specialFiles','createdAt'],['pressAtr','createdAt'],['meetings','date'],['departments','name'],['tags','name'],['courtCases','createdAt']];
   cols.forEach(([col,ord])=>{
     const q2=query(collection(db,col),orderBy(ord,'desc'));
     const unsub=onSnapshot(q2,snap=>{ S.data[col]=snap.docs.map(d=>({id:d.id,...d.data()})); setSyncState('synced'); updateBadges(); if(S.view) renderView(S.view); },err=>{ console.error(col,err); setSyncState('offline'); });
@@ -1233,6 +1245,8 @@ function updateBadges() {
   set('badge-press', S.data.pressAtr.filter(f=>f.status!=='replied').length);
   set('badge-meet', S.data.meetings.filter(m=>m.date>=today()).length);
   set('badge-pending', getPendingDepts().length);
+  const totalCourtOpen=S.data.courtCases.reduce((s,c)=>{const open=(c.totalCases||0)-(c.timeBoundCompleted||0); return s+(open>0?open:0);},0);
+  set('badge-court', totalCourtOpen||'');
 }
 
 function getPendingDepts() {
@@ -1244,7 +1258,7 @@ function getPendingDepts() {
 function navigate(view) {
   S.view=view;
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.param===view));
-  const fabLabels={'do-files':'New DO File','special-files':'New File','press-atr':'New Press ATR','meetings':'New Meeting','departments':'New Department','tags':'New Tag'};
+  const fabLabels={'do-files':'New DO File','special-files':'New File','press-atr':'New Press ATR','meetings':'New Meeting','departments':'New Department','tags':'New Tag','court-cases':'New Court Entry'};
   const fab=$('fab'),lbl=fab.querySelector('.btn-label');
   if(fabLabels[view]){ fab.style.display=''; lbl.textContent=fabLabels[view]; } else { fab.style.display='none'; }
   renderView(view);
@@ -1265,6 +1279,7 @@ function renderView(view) {
     case 'date-wise':    main.innerHTML=renderDateWise(); break;
     case 'pending':      main.innerHTML=renderPending(); break;
     case 'departments':  main.innerHTML=renderDepartments(); break;
+    case 'court-cases':  main.innerHTML=renderCourtCases(); postRenderCourtCharts(); break;
     case 'tags':         main.innerHTML=renderTags(); break;
     default: main.innerHTML='<div class="empty-state"><p>View not found</p></div>';
   }
@@ -1274,37 +1289,124 @@ function renderView(view) {
 function renderDashboard() {
   const doOpen=S.data.doFiles.filter(f=>f.status!=='closed').length;
   const doTotal=S.data.doFiles.length;
+  const doClosed=S.data.doFiles.filter(f=>f.status==='closed').length;
   const spOpen=S.data.specialFiles.filter(f=>f.status!=='closed').length;
   const prPend=S.data.pressAtr.filter(f=>f.status!=='replied').length;
+  const prReplied=S.data.pressAtr.filter(f=>f.status==='replied').length;
   const meetUp=S.data.meetings.filter(m=>m.date>=today()).length;
   const overdue=S.data.doFiles.filter(f=>f.dueDate&&f.dueDate<today()&&f.status!=='closed').length;
   const pending=getPendingDepts().length;
+  const totalDepts=S.data.departments.length;
+  const urgentFiles=S.data.doFiles.filter(f=>f.priority==='urgent'&&f.status!=='closed').length;
+  const totalCourt=S.data.courtCases.reduce((s,c)=>s+(c.totalCases||0),0);
+  const courtContempt=S.data.courtCases.reduce((s,c)=>s+(c.totalContempt||0),0);
   const recent=[...S.data.doFiles,...S.data.specialFiles,...S.data.pressAtr].filter(f=>f.createdAt).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)).slice(0,8);
+  const compliancePct=doTotal>0?Math.round((doClosed/doTotal)*100):0;
+  const pressCompPct=S.data.pressAtr.length>0?Math.round((prReplied/S.data.pressAtr.length)*100):0;
   return `
   <div class="page-header"><div>
     <div class="page-title">Dashboard</div>
     <div class="page-subtitle">Welcome, ${escHtml(S.user.name)} · ${S.user.role} · ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
-  </div></div>
-  <div class="kpi-grid">
-    <div class="kpi-card" onclick="navigate('do-files')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span></div><div class="kpi-label">Open DO Files</div><div class="kpi-value">${doOpen}</div><div class="kpi-hint">of ${doTotal} total</div></div>
-    <div class="kpi-card ${overdue>0?'error':'success'}" onclick="navigate('do-files')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg></span></div><div class="kpi-label">Overdue Files</div><div class="kpi-value">${overdue}</div><div class="kpi-hint">Past due date</div></div>
-    <div class="kpi-card warning" onclick="navigate('special-files')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-2.06 11L15 15.28 12.06 17l.78-3.33-2.59-2.24 3.41-.29L15 8l1.34 3.14 3.41.29-2.59 2.24.78 3.33z"/></svg></span></div><div class="kpi-label">Special Files Open</div><div class="kpi-value">${spOpen}</div><div class="kpi-hint">Awaiting action</div></div>
-    <div class="kpi-card" onclick="navigate('press-atr')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3H2v18l4-4h16V3zm-4 11H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg></span></div><div class="kpi-label">Press ATR Pending</div><div class="kpi-value">${prPend}</div><div class="kpi-hint">Awaiting reply</div></div>
-    <div class="kpi-card" onclick="navigate('meetings')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span></div><div class="kpi-label">Upcoming Meetings</div><div class="kpi-value">${meetUp}</div><div class="kpi-hint">Scheduled</div></div>
-    <div class="kpi-card ${pending>0?'error':'success'}" onclick="navigate('pending')"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></span></div><div class="kpi-label">Pending Depts Today</div><div class="kpi-value">${pending}</div><div class="kpi-hint">No DO filed today</div></div>
   </div>
+  <div class="page-actions">
+    <button class="btn btn-outlined btn-sm" onclick="navigate('pending')"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5z"/></svg></span> Pending (${pending})</button>
+    <button class="btn btn-filled btn-sm" onclick="navigate('do-files')"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></span> New DO</button>
+  </div></div>
+
+  <!-- Alert banner if overdue -->
+  ${overdue>0?`<div style="background:#fce8e6;border:1px solid #f5c6c2;border-radius:12px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;color:#b3261e">
+    <span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg></span>
+    <strong>${overdue} overdue file${overdue>1?'s':''}</strong> — immediate action required.
+    <button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="navigate('do-files')">View Overdue</button>
+  </div>`:''}
+
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
+    <div class="kpi-card" onclick="navigate('do-files')">
+      <div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span></div>
+      <div class="kpi-label">Open DO Files</div><div class="kpi-value">${doOpen}</div>
+      <div class="kpi-hint">of ${doTotal} total · ${compliancePct}% closed</div>
+      <div style="height:4px;background:var(--outline);border-radius:2px;margin-top:8px"><div style="height:4px;background:var(--primary);border-radius:2px;width:${compliancePct}%"></div></div>
+    </div>
+    <div class="kpi-card ${overdue>0?'error':'success'}" onclick="navigate('do-files')">
+      <div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg></span></div>
+      <div class="kpi-label">Overdue Files</div><div class="kpi-value">${overdue}</div>
+      <div class="kpi-hint">Past due date</div>
+    </div>
+    <div class="kpi-card warning" onclick="navigate('do-files')">
+      <div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg></span></div>
+      <div class="kpi-label">Urgent Files</div><div class="kpi-value">${urgentFiles}</div>
+      <div class="kpi-hint">Requires priority action</div>
+    </div>
+    <div class="kpi-card warning" onclick="navigate('special-files')">
+      <div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-2.06 11L15 15.28 12.06 17l.78-3.33-2.59-2.24 3.41-.29L15 8l1.34 3.14 3.41.29-2.59 2.24.78 3.33z"/></svg></span></div>
+      <div class="kpi-label">Special Files Open</div><div class="kpi-value">${spOpen}</div>
+      <div class="kpi-hint">Awaiting action</div>
+    </div>
+    <div class="kpi-card" onclick="navigate('press-atr')">
+      <div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3H2v18l4-4h16V3zm-4 11H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg></span></div>
+      <div class="kpi-label">Press ATR Pending</div><div class="kpi-value">${prPend}</div>
+      <div class="kpi-hint">${pressCompPct}% replied</div>
+      <div style="height:4px;background:var(--outline);border-radius:2px;margin-top:8px"><div style="height:4px;background:var(--success);border-radius:2px;width:${pressCompPct}%"></div></div>
+    </div>
+    <div class="kpi-card" onclick="navigate('meetings')">
+      <div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span></div>
+      <div class="kpi-label">Upcoming Meetings</div><div class="kpi-value">${meetUp}</div>
+      <div class="kpi-hint">Scheduled</div>
+    </div>
+    <div class="kpi-card ${pending>0?'error':'success'}" onclick="navigate('pending')">
+      <div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></span></div>
+      <div class="kpi-label">Pending Depts Today</div><div class="kpi-value">${pending}</div>
+      <div class="kpi-hint">${totalDepts-pending} of ${totalDepts} filed</div>
+    </div>
+    <div class="kpi-card" onclick="navigate('court-cases')">
+      <div class="kpi-icon" style="background:#f3e8fd"><span class="mi" style="color:#7627bb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h12v2H1zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828zM12.317 1l5.657 5.656-2.83 2.83-5.654-5.66zM3.825 9.485l5.657 5.657-2.828 2.828-5.657-5.657z"/></svg></span></div>
+      <div class="kpi-label">Total Court Cases</div><div class="kpi-value">${totalCourt}</div>
+      <div class="kpi-hint">${courtContempt} contempt cases</div>
+    </div>
+  </div>
+
   <div class="chart-row">
     <div class="chart-card"><h3>DO Files by Department (Top 8)</h3><div class="chart-wrap"><canvas id="chartDept"></canvas></div></div>
     <div class="chart-card"><h3>File Status Overview</h3><div class="chart-wrap"><canvas id="chartStatus"></canvas></div></div>
   </div>
-  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg></span>Recent Activity</div>
-    ${recent.length===0?'<div class="empty-state"><p>No records yet</p></div>':recent.map(f=>`
-    <div class="activity-item">
-      <div class="activity-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span></div>
-      <div class="activity-body"><div class="a-title">${escHtml(f.subject||f.title||f.headline||'—')}</div>
-      <div class="a-meta">${escHtml(f.department||'')} · ${fmtDt(f.createdAt)}</div></div>
-      ${statusChip(f.status)}
-    </div>`).join('')}
+  <div class="chart-row">
+    <div class="chart-card"><h3>Monthly DO Files Trend</h3><div class="chart-wrap"><canvas id="chartMonthly"></canvas></div></div>
+    <div class="chart-card"><h3>Department Compliance Rate</h3><div class="chart-wrap"><canvas id="chartCompliance"></canvas></div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg></span>Recent Activity</div>
+      ${recent.length===0?'<div class="empty-state"><p>No records yet</p></div>':recent.map(f=>`
+      <div class="activity-item">
+        <div class="activity-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span></div>
+        <div class="activity-body"><div class="a-title">${escHtml(f.subject||f.title||f.headline||'—')}</div>
+        <div class="a-meta">${escHtml(f.department||'')} · ${fmtDt(f.createdAt)}</div></div>
+        ${statusChip(f.status)}
+      </div>`).join('')}
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></span>Today's Pulse</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px">
+        ${[
+          {label:'Filed Today',val:S.data.doFiles.filter(f=>f.dateIssued===today()||(f.createdAt&&new Date(f.createdAt.seconds*1000).toISOString().slice(0,10)===today())).length,color:'var(--primary)'},
+          {label:'Meetings Today',val:S.data.meetings.filter(m=>m.date===today()).length,color:'var(--success)'},
+          {label:'Press ATR Today',val:S.data.pressAtr.filter(f=>f.dateReceived===today()).length,color:'var(--warning)'},
+          {label:'Depts Compliant',val:totalDepts-pending,color:pending===0?'var(--success)':'var(--on-surface)'},
+        ].map(item=>`<div style="background:var(--surface-dim);border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:28px;font-weight:400;font-family:'Google Sans Display',sans-serif;color:${item.color}">${item.val}</div>
+          <div style="font-size:11px;color:var(--on-surface-variant);margin-top:4px">${item.label}</div>
+        </div>`).join('')}
+      </div>
+      <hr class="div" style="margin:16px 0 12px">
+      <div class="card-title" style="margin-bottom:8px"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h12v2H1zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828zM12.317 1l5.657 5.656-2.83 2.83-5.654-5.66zM3.825 9.485l5.657 5.657-2.828 2.828-5.657-5.657z"/></svg></span>Court Summary</div>
+      ${S.data.courtCases.length===0?'<p class="text-muted" style="font-size:12px">No court data entered yet</p>':
+      S.data.courtCases.slice(0,3).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--outline);font-size:13px">
+        <span>${escHtml(c.period||'—')}</span>
+        <span class="chip chip-primary">${c.totalCases||0} cases</span>
+      </div>`).join('')}
+      <button class="btn btn-text btn-sm" style="margin-top:8px" onclick="navigate('court-cases')">View all →</button>
+    </div>
   </div>`;
 }
 
@@ -1319,6 +1421,26 @@ function postRenderCharts() {
   all.forEach(f=>{ const s=f.status||'open'; statCount[s]=(statCount[s]||0)+1; });
   const c2=$('chartStatus');
   if(c2&&Object.keys(statCount).length) new Chart(c2,{type:'doughnut',data:{labels:Object.keys(statCount),datasets:[{data:Object.values(statCount),backgroundColor:['#1a73e8','#188038','#f9ab00','#d93025','#9c27b0','#5f6368']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+
+  // Monthly trend
+  const monthly={};
+  S.data.doFiles.forEach(f=>{
+    const d=f.dateIssued||(f.createdAt?new Date(f.createdAt.seconds*1000).toISOString().slice(0,7):null);
+    if(d){ const m=d.slice(0,7); monthly[m]=(monthly[m]||0)+1; }
+  });
+  const sortedMonths=Object.keys(monthly).sort().slice(-6);
+  const c3=$('chartMonthly');
+  if(c3&&sortedMonths.length) new Chart(c3,{type:'line',data:{labels:sortedMonths.map(m=>{const [y,mo]=m.split('-');return new Date(y,mo-1).toLocaleString('en-IN',{month:'short',year:'2-digit'});}),datasets:[{label:'DO Files',data:sortedMonths.map(m=>monthly[m]),borderColor:'#1a73e8',backgroundColor:'rgba(26,115,232,.1)',fill:true,tension:.4,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+
+  // Dept compliance
+  const depts=S.data.departments.map(d=>d.name).sort().slice(0,8);
+  const compRate=depts.map(dept=>{
+    const dos=S.data.doFiles.filter(f=>f.department===dept);
+    const closed=dos.filter(f=>f.status==='closed').length;
+    return dos.length>0?Math.round(closed/dos.length*100):0;
+  });
+  const c4=$('chartCompliance');
+  if(c4&&depts.length) new Chart(c4,{type:'bar',data:{labels:depts.map(d=>d.length>12?d.slice(0,10)+'…':d),datasets:[{label:'Closure %',data:compRate,backgroundColor:compRate.map(v=>v>=70?'#188038':v>=40?'#f9ab00':'#d93025'),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}});
 }
 
 // DAILY REPORT
@@ -1333,7 +1455,7 @@ function renderDailyReport() {
     <div class="page-subtitle">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
   </div><div class="page-actions"><button class="btn btn-outlined" onclick="window.print()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg></span> Print</button></div></div>
   <div class="report-header"><h2>Daily Status Report — Mayiladuthurai District</h2><p>Office of the District Collector · Generated on ${new Date().toLocaleString('en-IN')}</p></div>
-  <div class="report-section"><h3>Today's Daily Orders (${todayDO.length})</h3>
+  <div class="report-section"><h3>Today's Demi Official Orders (${todayDO.length})</h3>
     ${todayDO.length===0?'<p class="text-muted">No Daily Orders issued today</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Priority</th><th>Due Date</th><th>Status</th></tr></thead><tbody>
     ${todayDO.map(f=>`<tr><td>${escHtml(f.doNumber||'—')}</td><td>${escHtml(f.subject||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${priorityChip(f.priority)}</td><td>${f.dueDate||'—'}</td><td>${statusChip(f.status)}</td></tr>`).join('')}</tbody></table></div>`}
   </div>
@@ -1359,7 +1481,7 @@ function renderDoFiles() {
   if(doDept!=='all') files=files.filter(f=>f.department===doDept);
   const depts=[...new Set(S.data.doFiles.map(f=>f.department).filter(Boolean))].sort();
   return `
-  <div class="page-header"><div><div class="page-title">Daily Orders (DO Files)</div><div class="page-subtitle">${files.length} of ${S.data.doFiles.length} files</div></div></div>
+  <div class="page-header"><div><div class="page-title">Demi Official Orders (DO)</div><div class="page-subtitle">${files.length} of ${S.data.doFiles.length} files</div></div></div>
   <div class="filters">
     <div class="search-box" style="flex:1;min-width:180px"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></span>
       <input placeholder="Search…" value="${escHtml(doSearch)}" oninput="doSearch=this.value;renderView('do-files')"></div>
@@ -1405,8 +1527,13 @@ function openDoDetail(id) {
       <dt>Status</dt><dd>${statusChip(f.status||'open')}</dd><dt>Tags</dt><dd>${tagBadges(f.tags)||'—'}</dd>
       <dt>Remarks</dt><dd>${escHtml(f.remarks||'—')}</dd><dt>Created By</dt><dd>${escHtml(f.createdBy||'—')}</dd>
       <dt>Created At</dt><dd>${fmtDt(f.createdAt)}</dd>
-    </dl></div>
+      ${f.complianceDate?`<dt>Compliance Date</dt><dd>${f.complianceDate}</dd>`:''} 
+      ${f.complianceRemarks?`<dt>Compliance Remarks</dt><dd>${escHtml(f.complianceRemarks)}</dd>`:''}
+    </dl>
+    ${(f.photos||[]).length?`<div style="margin-top:12px"><label class="form-label">Work Photos</label><div class="photo-grid">${(f.photos||[]).map(p=>`<div class="photo-thumb"><img src="${p}" onclick="viewPhoto('${p}')"></div>`).join('')}</div></div>`:''}
+    ${(f.compliancePhotos||[]).length?`<div style="margin-top:12px"><label class="form-label">Compliance Evidence</label><div class="photo-grid">${(f.compliancePhotos||[]).map(p=>`<div class="photo-thumb"><img src="${p}" onclick="viewPhoto('${p}')"></div>`).join('')}</div></div>`:''}</div>
     <div class="modal-footer">
+      <button class="btn btn-tonal" onclick="closeModal();openComplianceUpdate('${f.id}')"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82 1.89 3.2L12 21.04l3.4 1.46 1.89-3.2 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg></span> Compliance</button>
       <button class="btn btn-outlined" onclick="closeModal();openDoEdit('${f.id}')">Edit</button>
       <button class="btn btn-danger-text" onclick="closeModal();deleteRecord('doFiles','${f.id}')">Delete</button>
       <button class="btn btn-filled" onclick="closeModal()">Close</button>
@@ -1415,6 +1542,7 @@ function openDoDetail(id) {
 
 function openDoEdit(id) {
   const f=id?S.data.doFiles.find(x=>x.id===id)||{}:{};
+  window._doPhotos=[...(f.photos||[])];
   const depts=S.data.departments.map(d=>d.name).sort();
   const tagOpts=S.data.tags.map(t=>`<label style="display:inline-flex;align-items:center;gap:4px;margin:3px;cursor:pointer"><input type="checkbox" value="${t.id}" ${(f.tags||[]).includes(t.id)?'checked':''}><span class="tag-chip" style="background:${t.bg};color:${t.fg}">${escHtml(t.name)}</span></label>`).join('');
   openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} DO File</h2>
@@ -1435,6 +1563,14 @@ function openDoEdit(id) {
       </div>
       <div class="form-group"><label class="form-label">Tags</label><div class="tag-picker" id="mDoTags">${tagOpts||'<span class="text-muted" style="font-size:12px">No tags yet</span>'}</div></div>
       <div class="form-group"><label class="form-label">Remarks</label><textarea id="mDoRem" class="form-textarea" rows="3">${escHtml(f.remarks||'')}</textarea></div>
+      <div class="form-group"><label class="form-label">Work Photos</label>
+        <label class="photo-uploader" id="doPhotoUploader">
+          <input type="file" id="doPhotoInput" accept="image/*" multiple onchange="handleDoPhotos(this)">
+          <span class="mi mi-lg" style="color:var(--on-surface-variant)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></span>
+          <p style="font-size:13px;color:var(--on-surface-variant);margin-top:6px">Click to upload photos (site/work evidence)</p>
+        </label>
+        <div class="photo-grid" id="doPhotoGrid">${(f.photos||[]).map((p,i)=>`<div class="photo-thumb"><img src="${p}" onclick="viewPhoto('${p}')"><button class="photo-remove" onclick="removeDoPhoto(${i})"><span class="mi" style="width:14px;height:14px"><svg viewBox="0 0 24 24" fill="white"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>`).join('')}</div>
+      </div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
       <button class="btn btn-filled" onclick="saveDoFile('${id||''}')"><span class="mi">${id?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>'}</span> ${id?'Save':'Create'}</button>
@@ -1445,16 +1581,123 @@ async function saveDoFile(id) {
   const subj=$('mDoSubj').value.trim(), dept=$('mDoDept').value;
   if(!subj){ snack('Subject required','warn'); return; } if(!dept){ snack('Department required','warn'); return; }
   const tags=[...document.querySelectorAll('#mDoTags input:checked')].map(i=>i.value);
-  const data={doNumber:$('mDoNum').value.trim(),dateIssued:$('mDoDate').value,subject:subj,department:dept,dueDate:$('mDoDue').value,priority:$('mDoPri').value,status:$('mDoStatus').value,tags,remarks:$('mDoRem').value.trim(),updatedAt:serverTimestamp()};
+  const photos=window._doPhotos||[];
+  const data={doNumber:$('mDoNum').value.trim(),dateIssued:$('mDoDate').value,subject:subj,department:dept,dueDate:$('mDoDue').value,priority:$('mDoPri').value,status:$('mDoStatus').value,tags,remarks:$('mDoRem').value.trim(),photos,updatedAt:serverTimestamp()};
   setSyncState('syncing');
   try{
     if(id){ await updateDoc(doc(db,'doFiles',id),data); snack('DO File updated'); }
     else{ data.createdAt=serverTimestamp(); data.createdBy=S.user.name+' ('+S.user.role+')'; await addDoc(collection(db,'doFiles'),data); snack('DO File created'); }
-    closeModal();
+    closeModal(); window._doPhotos=[];
   }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
 }
 
-// SPECIAL FILES
+// PHOTO HANDLING
+window._doPhotos=[];
+function handleDoPhotos(input) {
+  const files=[...input.files];
+  files.forEach(file=>{
+    if(file.size>2*1024*1024){ snack('Image too large (max 2MB)','warn'); return; }
+    const reader=new FileReader();
+    reader.onload=e=>{
+      // Resize before storing
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        const MAX=600; let w=img.width,h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=h*(MAX/w);w=MAX;}else{w=w*(MAX/h);h=MAX;} }
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        const dataUrl=canvas.toDataURL('image/jpeg',0.75);
+        window._doPhotos.push(dataUrl);
+        renderDoPhotoGrid();
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderDoPhotoGrid() {
+  const grid=$('doPhotoGrid'); if(!grid) return;
+  grid.innerHTML=window._doPhotos.map((p,i)=>`<div class="photo-thumb"><img src="${p}" onclick="viewPhoto('${p}')"><button class="photo-remove" onclick="removeDoPhoto(${i})"><span class="mi" style="width:14px;height:14px"><svg viewBox="0 0 24 24" fill="white"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>`).join('');
+}
+function removeDoPhoto(i){ window._doPhotos.splice(i,1); renderDoPhotoGrid(); }
+function viewPhoto(src){
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">Photo</h2><button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
+  <div class="modal-body" style="text-align:center"><img src="${src}" style="max-width:100%;border-radius:8px"></div>
+  <div class="modal-footer"><button class="btn btn-filled" onclick="closeModal()">Close</button></div></div>`);
+}
+
+// COMPLIANCE UPDATE
+function openComplianceUpdate(id) {
+  const f=S.data.doFiles.find(x=>x.id===id); if(!f) return;
+  window._compPhotos=[];
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">Update Compliance — ${escHtml(f.doNumber||f.subject||'—')}</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
+  <div class="modal-body">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Update Status</label>
+        <select id="compStatus" class="form-select">
+          <option value="open" ${f.status==='open'?'selected':''}>Open</option>
+          <option value="in-progress" ${f.status==='in-progress'?'selected':''}>In Progress</option>
+          <option value="pending" ${f.status==='pending'?'selected':''}>Pending</option>
+          <option value="closed" ${f.status==='closed'?'selected':''}>Closed / Complied</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Compliance Date</label>
+        <input id="compDate" type="date" class="form-input" value="${today()}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Compliance Remarks</label>
+      <textarea id="compRemarks" class="form-textarea" rows="3" placeholder="Describe the action taken...">${escHtml(f.complianceRemarks||'')}</textarea></div>
+    <div class="form-group"><label class="form-label">Upload Compliance Evidence Photos</label>
+      <label class="photo-uploader">
+        <input type="file" accept="image/*" multiple onchange="handleCompPhotos(this)">
+        <span class="mi mi-lg" style="color:var(--on-surface-variant)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></span>
+        <p style="font-size:13px;color:var(--on-surface-variant);margin-top:6px">Upload photos as compliance proof</p>
+      </label>
+      <div class="photo-grid" id="compPhotoGrid"></div>
+    </div>
+    ${(f.compliancePhotos||[]).length?`<div class="form-group"><label class="form-label">Previous Compliance Photos</label><div class="photo-grid">${(f.compliancePhotos||[]).map(p=>`<div class="photo-thumb"><img src="${p}" onclick="viewPhoto('${p}')"></div>`).join('')}</div></div>`:''}
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-filled" onclick="saveCompliance('${id}')"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82 1.89 3.2L12 21.04l3.4 1.46 1.89-3.2 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg></span> Save Compliance</button>
+  </div></div>`);
+}
+window._compPhotos=[];
+function handleCompPhotos(input) {
+  const files=[...input.files];
+  files.forEach(file=>{
+    if(file.size>2*1024*1024){ snack('Image too large (max 2MB)','warn'); return; }
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        const MAX=600; let w=img.width,h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=h*(MAX/w);w=MAX;}else{w=w*(MAX/h);h=MAX;} }
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        window._compPhotos.push(canvas.toDataURL('image/jpeg',0.75));
+        const grid=$('compPhotoGrid'); if(grid) grid.innerHTML=window._compPhotos.map((p,i)=>`<div class="photo-thumb"><img src="${p}" onclick="viewPhoto('${p}')"></div>`).join('');
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function saveCompliance(id) {
+  const status=$('compStatus').value;
+  const remarks=$('compRemarks').value.trim();
+  const compDate=$('compDate').value;
+  const photos=window._compPhotos||[];
+  const existing=S.data.doFiles.find(x=>x.id===id);
+  const prevPhotos=existing?.compliancePhotos||[];
+  const data={status,complianceRemarks:remarks,complianceDate:compDate,compliancePhotos:[...prevPhotos,...photos],updatedAt:serverTimestamp()};
+  setSyncState('syncing');
+  try{
+    await updateDoc(doc(db,'doFiles',id),data);
+    snack('Compliance updated'); closeModal(); window._compPhotos=[];
+  }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
 let spSearch='',spStatus='all';
 function renderSpecialFiles() {
   let files=S.data.specialFiles;
@@ -1511,22 +1754,52 @@ function openSpEdit(id) {
         <div class="form-group"><label class="form-label">Status</label><select id="mSpStatus" class="form-select"><option value="open" ${!f.status||f.status==='open'?'selected':''}>Open</option><option value="in-progress" ${f.status==='in-progress'?'selected':''}>In Progress</option><option value="pending" ${f.status==='pending'?'selected':''}>Pending</option><option value="closed" ${f.status==='closed'?'selected':''}>Closed</option></select></div></div>
       <div class="form-group"><label class="form-label">Tags</label><div class="tag-picker" id="mSpTags">${tagOpts||'<span class="text-muted" style="font-size:12px">No tags yet</span>'}</div></div>
       <div class="form-group"><label class="form-label">Notes</label><textarea id="mSpNotes" class="form-textarea">${escHtml(f.notes||'')}</textarea></div>
+      <div class="form-group"><label class="form-label">Photos</label>
+        <label class="photo-uploader">
+          <input type="file" accept="image/*" multiple onchange="handleSpPhotos(this)">
+          <span class="mi mi-lg" style="color:var(--on-surface-variant)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg></span>
+          <p style="font-size:13px;color:var(--on-surface-variant);margin-top:6px">Upload file/site photos</p>
+        </label>
+        <div class="photo-grid" id="spPhotoGrid">${(f.photos||[]).map(p=>`<div class="photo-thumb"><img src="${p}" onclick="viewPhoto('${p}')"></div>`).join('')}</div>
+      </div>
     </div>
     <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
       <button class="btn btn-filled" onclick="saveSpFile('${id||''}')"><span class="mi">${id?'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>':'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>'}</span> ${id?'Save':'Create'}</button>
     </div></div>`);
 }
 
+window._spPhotos=[];
+function handleSpPhotos(input) {
+  const files=[...input.files];
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        const MAX=600; let w=img.width,h=img.height;
+        if(w>MAX||h>MAX){ if(w>h){h=h*(MAX/w);w=MAX;}else{w=w*(MAX/h);h=MAX;} }
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        window._spPhotos.push(canvas.toDataURL('image/jpeg',0.75));
+        const grid=$('spPhotoGrid'); if(grid) grid.innerHTML=window._spPhotos.map(p=>`<div class="photo-thumb"><img src="${p}" onclick="viewPhoto('${p}')"></div>`).join('');
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 async function saveSpFile(id) {
   const title=$('mSpTitle').value.trim(), dept=$('mSpDept').value;
   if(!title){ snack('Title required','warn'); return; } if(!dept){ snack('Department required','warn'); return; }
   const tags=[...document.querySelectorAll('#mSpTags input:checked')].map(i=>i.value);
-  const data={fileNo:$('mSpNo').value.trim(),dateCreated:$('mSpDate').value,title,department:dept,dueDate:$('mSpDue').value,priority:$('mSpPri').value,status:$('mSpStatus').value,tags,notes:$('mSpNotes').value.trim(),updatedAt:serverTimestamp()};
+  const data={fileNo:$('mSpNo').value.trim(),dateCreated:$('mSpDate').value,title,department:dept,dueDate:$('mSpDue').value,priority:$('mSpPri').value,status:$('mSpStatus').value,tags,notes:$('mSpNotes').value.trim(),photos:window._spPhotos||[],updatedAt:serverTimestamp()};
   setSyncState('syncing');
   try{
     if(id){ await updateDoc(doc(db,'specialFiles',id),data); snack('File updated'); }
     else{ data.createdAt=serverTimestamp(); data.createdBy=S.user.name+' ('+S.user.role+')'; await addDoc(collection(db,'specialFiles'),data); snack('File created'); }
-    closeModal();
+    closeModal(); window._spPhotos=[];
   }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
 }
 
@@ -1731,7 +2004,9 @@ function calDayClick(ds){
 
 // DEPT-WISE
 function renderDeptWise() {
-  const depts=S.data.departments.map(d=>d.name).sort();
+  // Deduplicate departments by name
+  const seen=new Set();
+  const depts=S.data.departments.filter(d=>{ if(seen.has(d.name)) return false; seen.add(d.name); return true; }).map(d=>d.name).sort();
   return `<div class="page-header"><div><div class="page-title">Department-wise Report</div><div class="page-subtitle">${depts.length} departments</div></div></div>
   <div class="dept-grid">${depts.map(dept=>{
     const dos=S.data.doFiles.filter(f=>f.department===dept);
@@ -1765,24 +2040,50 @@ function openDeptDrill(dept) {
 }
 
 // DATE-WISE
-let dwDate=today();
+let dwFrom=today(), dwTo=today();
 function renderDateWise() {
-  const files=S.data.doFiles.filter(f=>f.dateIssued===dwDate||(f.createdAt&&new Date(f.createdAt.seconds*1000).toISOString().slice(0,10)===dwDate));
-  const meets=S.data.meetings.filter(m=>m.date===dwDate);
-  const press=S.data.pressAtr.filter(f=>f.dateReceived===dwDate);
+  const inRange=(dateStr)=>{ if(!dateStr) return false; return dateStr>=dwFrom&&dateStr<=dwTo; };
+  const files=S.data.doFiles.filter(f=>inRange(f.dateIssued)||(f.createdAt&&inRange(new Date(f.createdAt.seconds*1000).toISOString().slice(0,10))));
+  const meets=S.data.meetings.filter(m=>inRange(m.date));
+  const press=S.data.pressAtr.filter(f=>inRange(f.dateReceived));
+  const rangeLabel=dwFrom===dwTo?`${dwFrom}`:`${dwFrom} to ${dwTo}`;
   return `
-  <div class="page-header"><div><div class="page-title">Date-wise Report</div></div>
-    <div class="page-actions"><input type="date" class="filter-input" value="${dwDate}" onchange="dwDate=this.value;renderView('date-wise')" style="width:auto"></div></div>
-  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span>DO Files (${files.length})</div>
-    ${files.length===0?'<p class="text-muted">No DO files for this date</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Priority</th><th>Status</th></tr></thead><tbody>
-    ${files.map(f=>`<tr onclick="openDoDetail('${f.id}')"><td>${escHtml(f.doNumber||'—')}</td><td>${escHtml(f.subject||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${priorityChip(f.priority)}</td><td>${statusChip(f.status||'open')}</td></tr>`).join('')}</tbody></table></div>`}
+  <div class="page-header"><div><div class="page-title">Date-wise Report</div><div class="page-subtitle">${rangeLabel}</div></div>
+    <div class="page-actions">
+      <div class="filters" style="margin-bottom:0;padding:8px 12px;gap:8px;align-items:center">
+        <label style="font-size:12px;font-weight:600;color:var(--on-surface-variant);white-space:nowrap">From</label>
+        <input type="date" class="filter-input" value="${dwFrom}" onchange="dwFrom=this.value;if(dwTo<dwFrom)dwTo=dwFrom;renderView('date-wise')" style="width:auto">
+        <label style="font-size:12px;font-weight:600;color:var(--on-surface-variant);white-space:nowrap">To</label>
+        <input type="date" class="filter-input" value="${dwTo}" onchange="dwTo=this.value;if(dwFrom>dwTo)dwFrom=dwTo;renderView('date-wise')" style="width:auto">
+        <button class="btn btn-tonal btn-sm" onclick="dwFrom=today();dwTo=today();renderView('date-wise')">Today</button>
+        <button class="btn btn-outlined btn-sm" onclick="setDateRange(7)">Last 7d</button>
+        <button class="btn btn-outlined btn-sm" onclick="setDateRange(30)">Last 30d</button>
+        <button class="btn btn-outlined btn-sm" onclick="window.print()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg></span> Print</button>
+      </div>
+    </div></div>
+
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:20px">
+    <div class="kpi-card"><div class="kpi-label">DO Files</div><div class="kpi-value">${files.length}</div><div class="kpi-hint">in range</div></div>
+    <div class="kpi-card"><div class="kpi-label">Meetings</div><div class="kpi-value">${meets.length}</div><div class="kpi-hint">scheduled</div></div>
+    <div class="kpi-card"><div class="kpi-label">Press ATR</div><div class="kpi-value">${press.length}</div><div class="kpi-hint">received</div></div>
+    <div class="kpi-card ${files.filter(f=>f.priority==='urgent').length>0?'error':''}"><div class="kpi-label">Urgent DO</div><div class="kpi-value">${files.filter(f=>f.priority==='urgent').length}</div><div class="kpi-hint">urgent priority</div></div>
   </div>
-  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg></span>Meetings (${meets.length})</div>
-    ${meets.length===0?'<p class="text-muted">No meetings</p>':meets.map(m=>`<div class="meeting-card" onclick="openMeetDetail('${m.id}')"><h4>${escHtml(m.title||'—')}</h4><div class="m-meta">${m.time||''} · ${escHtml(m.venue||'')}</div></div>`).join('')}
+
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span>Demi Official Orders (${files.length})</div>
+    ${files.length===0?'<p class="text-muted">No DO files for this date range</p>':`<div class="table-wrap"><table><thead><tr><th>DO No.</th><th>Subject</th><th>Department</th><th>Date</th><th>Priority</th><th>Status</th></tr></thead><tbody>
+    ${files.map(f=>`<tr onclick="openDoDetail('${f.id}')"><td>${escHtml(f.doNumber||'—')}</td><td>${escHtml(f.subject||'—')}</td><td>${escHtml(f.department||'—')}</td><td>${f.dateIssued||fmt(f.createdAt)}</td><td>${priorityChip(f.priority)}</td><td>${statusChip(f.status||'open')}</td></tr>`).join('')}</tbody></table></div>`}
   </div>
-  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3H2v18l4-4h16V3zm-4 11H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg></span>Press ATR (${press.length})</div>
-    ${press.length===0?'<p class="text-muted">None</p>':press.map(p=>`<div class="activity-item"><div class="activity-body"><div class="a-title">${escHtml(p.headline||'—')}</div><div class="a-meta">${escHtml(p.source||'')} · ${statusChip(p.status)}</div></div></div>`).join('')}
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91z"/></svg></span>Meetings (${meets.length})</div>
+    ${meets.length===0?'<p class="text-muted">No meetings in this range</p>':meets.map(m=>`<div class="meeting-card" onclick="openMeetDetail('${m.id}')"><h4>${escHtml(m.title||'—')}</h4><div class="m-meta">${m.date||''} · ${m.time||''} · ${escHtml(m.venue||'')}</div></div>`).join('')}
+  </div>
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 3H2v18l4-4h16V3z"/></svg></span>Press ATR (${press.length})</div>
+    ${press.length===0?'<p class="text-muted">None in range</p>':press.map(p=>`<div class="activity-item"><div class="activity-body"><div class="a-title">${escHtml(p.headline||'—')}</div><div class="a-meta">${escHtml(p.source||'')} · ${escHtml(p.department||'')} · ${p.dateReceived||''}</div></div>${statusChip(p.status)}</div>`).join('')}
   </div>`;
+}
+function setDateRange(days){
+  const d=new Date(); dwTo=d.toISOString().slice(0,10);
+  d.setDate(d.getDate()-days+1); dwFrom=d.toISOString().slice(0,10);
+  renderView('date-wise');
 }
 
 // PENDING
@@ -1873,7 +2174,190 @@ async function saveTag() {
   catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
 }
 
-// DELETE
+// COURT CASES MONITORING
+function renderCourtCases() {
+  const cases=S.data.courtCases||[];
+  const totalCases=cases.reduce((s,c)=>s+(c.totalCases||0),0);
+  const counterFiled=cases.reduce((s,c)=>s+(c.counterFiled||0),0);
+  const counterNotFiled=cases.reduce((s,c)=>s+(c.counterNotFiled||0),0);
+  const timeBound=cases.reduce((s,c)=>s+(c.timeBoundCases||0),0);
+  const tbCompleted=cases.reduce((s,c)=>s+(c.timeBoundCompleted||0),0);
+  const tbPending=cases.reduce((s,c)=>s+(c.timeBoundPending||0),0);
+  const contemptOpen=cases.reduce((s,c)=>s+(c.contemptOpeningBalance||0),0);
+  const contemptReceived=cases.reduce((s,c)=>s+(c.contemptReceived||0),0);
+  const totalContempt=cases.reduce((s,c)=>s+(c.totalContempt||0),0);
+  const latest=cases[0]||null;
+  return `
+  <div class="page-header"><div>
+    <div class="page-title">Court Case Monitoring</div>
+    <div class="page-subtitle">15-Day Abstract · PA (Legal) · District Collector</div>
+  </div>
+  <div class="page-actions">
+    <button class="btn btn-outlined" onclick="window.print()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg></span> Print</button>
+  </div></div>
+
+  <!-- KPI Row -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
+    <div class="kpi-card"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h12v2H1zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828zM12.317 1l5.657 5.656-2.83 2.83-5.654-5.66zM3.825 9.485l5.657 5.657-2.828 2.828-5.657-5.657z"/></svg></span></div>
+      <div class="kpi-label">Total Cases</div><div class="kpi-value">${totalCases}</div><div class="kpi-hint">All categories</div></div>
+    <div class="kpi-card success"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span></div>
+      <div class="kpi-label">Counter Filed</div><div class="kpi-value">${counterFiled}</div><div class="kpi-hint">Responses filed</div></div>
+    <div class="kpi-card ${counterNotFiled>0?'error':'success'}"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></div>
+      <div class="kpi-label">Counter Not Filed</div><div class="kpi-value">${counterNotFiled}</div><div class="kpi-hint">Pending response</div></div>
+    <div class="kpi-card warning"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg></span></div>
+      <div class="kpi-label">Time Bound</div><div class="kpi-value">${timeBound}</div><div class="kpi-hint">${tbPending} pending</div></div>
+    <div class="kpi-card success"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82 1.89 3.2L12 21.04l3.4 1.46 1.89-3.2 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg></span></div>
+      <div class="kpi-label">TB Completed</div><div class="kpi-value">${tbCompleted}</div><div class="kpi-hint">Compliance done</div></div>
+    <div class="kpi-card ${totalContempt>0?'error':'neutral'}"><div class="kpi-icon"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5.99L19.53 19H4.47L12 5.99M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg></span></div>
+      <div class="kpi-label">Total Contempt</div><div class="kpi-value">${totalContempt}</div><div class="kpi-hint">${contemptReceived} received (15d)</div></div>
+  </div>
+
+  <!-- Charts -->
+  <div class="chart-row">
+    <div class="chart-card"><h3>Counter Filed vs Not Filed</h3><div class="chart-wrap"><canvas id="chartCourtCounter"></canvas></div></div>
+    <div class="chart-card"><h3>Time-Bound Compliance</h3><div class="chart-wrap"><canvas id="chartCourtTB"></canvas></div></div>
+  </div>
+
+  <!-- 15-Day Abstract summary box (if latest exists) -->
+  ${latest?`
+  <div class="card" style="border-left:4px solid #7627bb;margin-bottom:20px">
+    <div class="card-title" style="color:#7627bb"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h12v2H1zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828zM12.317 1l5.657 5.656-2.83 2.83-5.654-5.66zM3.825 9.485l5.657 5.657-2.828 2.828-5.657-5.657z"/></svg></span>
+      Latest 15-Day Abstract — ${escHtml(latest.period||'—')}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px">
+      <div style="background:var(--surface-dim);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:600;color:var(--on-surface-variant);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">① Cases</div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Total Cases</span><strong>${latest.totalCases||0}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:var(--success)">Counter Filed</span><strong>${latest.counterFiled||0}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--error)">Counter Not Filed</span><strong>${latest.counterNotFiled||0}</strong></div>
+      </div>
+      <div style="background:var(--surface-dim);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:600;color:var(--on-surface-variant);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">② Time-Bound</div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Numbers</span><strong>${latest.timeBoundCases||0}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:var(--success)">Completed</span><strong>${latest.timeBoundCompleted||0}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--warning)">Pending</span><strong>${latest.timeBoundPending||0}</strong></div>
+      </div>
+      <div style="background:var(--surface-dim);border-radius:10px;padding:14px">
+        <div style="font-size:11px;font-weight:600;color:var(--on-surface-variant);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">③ Contempt</div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Opening Balance</span><strong>${latest.contemptOpeningBalance||0}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Received (15d)</span><strong>${latest.contemptReceived||0}</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--error)">Total</span><strong>${latest.totalContempt||0}</strong></div>
+      </div>
+    </div>
+    ${(latest.deptBreakdown||[]).length?`
+    <div class="card-title" style="margin-bottom:8px">④ Major 3 Departments</div>
+    <div class="table-wrap"><table><thead><tr><th>Department</th><th>Counter</th><th>Time-Bound</th><th>Contempt</th></tr></thead>
+    <tbody>${(latest.deptBreakdown||[]).map(d=>`<tr><td><strong>${escHtml(d.name||'—')}</strong></td><td>${d.counter||0}</td><td>${d.timeBound||0}</td><td>${d.contempt||0}</td></tr>`).join('')}</tbody></table></div>
+    `:''}
+    <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid var(--outline);font-size:12px;color:var(--on-surface-variant)">
+      <span>Sd/- PA (Legal)</span><span>Sd/- District Collector</span>
+    </div>
+  </div>`:''}
+
+  <!-- All entries table -->
+  <div class="card"><div class="card-title"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg></span>All Court Entries</div>
+    ${cases.length===0?`<div class="empty-state"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h12v2H1zM5.245 8.07l2.83-2.827 14.14 14.142-2.828 2.828z"/></svg></span><p>No court data yet. Click + to add first entry.</p></div>`:
+    `<div class="table-wrap"><table><thead><tr><th>Period</th><th>Total Cases</th><th>Counter Filed</th><th>Counter Not Filed</th><th>Time Bound</th><th>TB Completed</th><th>TB Pending</th><th>Contempt</th><th></th></tr></thead>
+    <tbody>${cases.map(c=>`<tr>
+      <td><strong>${escHtml(c.period||'—')}</strong></td>
+      <td>${c.totalCases||0}</td>
+      <td><span class="chip chip-success">${c.counterFiled||0}</span></td>
+      <td><span class="chip ${(c.counterNotFiled||0)>0?'chip-error':'chip-neutral'}">${c.counterNotFiled||0}</span></td>
+      <td>${c.timeBoundCases||0}</td>
+      <td><span class="chip chip-success">${c.timeBoundCompleted||0}</span></td>
+      <td><span class="chip ${(c.timeBoundPending||0)>0?'chip-warning':'chip-neutral'}">${c.timeBoundPending||0}</span></td>
+      <td><span class="chip ${(c.totalContempt||0)>0?'chip-error':'chip-neutral'}">${c.totalContempt||0}</span></td>
+      <td><button class="btn btn-text btn-sm" onclick="openCourtEdit('${c.id}')">Edit</button>
+          <button class="btn btn-danger-text btn-sm" onclick="deleteRecord('courtCases','${c.id}')">Del</button></td>
+    </tr>`).join('')}</tbody></table></div>`}
+  </div>`;
+}
+
+function postRenderCourtCharts() {
+  const cases=S.data.courtCases||[];
+  const labels=cases.slice(0,6).reverse().map(c=>c.period||'—');
+  const c1=$('chartCourtCounter');
+  if(c1&&cases.length) new Chart(c1,{type:'bar',data:{labels,datasets:[
+    {label:'Filed',data:cases.slice(0,6).reverse().map(c=>c.counterFiled||0),backgroundColor:'#188038',borderRadius:4},
+    {label:'Not Filed',data:cases.slice(0,6).reverse().map(c=>c.counterNotFiled||0),backgroundColor:'#d93025',borderRadius:4}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:false},y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+  const c2=$('chartCourtTB');
+  if(c2&&cases.length) new Chart(c2,{type:'bar',data:{labels,datasets:[
+    {label:'Completed',data:cases.slice(0,6).reverse().map(c=>c.timeBoundCompleted||0),backgroundColor:'#188038',borderRadius:4},
+    {label:'Pending',data:cases.slice(0,6).reverse().map(c=>c.timeBoundPending||0),backgroundColor:'#f9ab00',borderRadius:4}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+}
+
+function openCourtEdit(id) {
+  const c=id?S.data.courtCases.find(x=>x.id===id)||{}:{};
+  const depts=S.data.departments.map(d=>d.name).sort();
+  const deptRows=(c.deptBreakdown||[{},{},{}]).slice(0,3);
+  while(deptRows.length<3) deptRows.push({});
+  openModal(`<div class="modal wide"><div class="modal-header"><h2 class="modal-title">${id?'Edit':'New'} Court Entry</h2>
+    <button class="icon-btn" onclick="closeModal()"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Period / Abstract Date *</label>
+      <input id="cPeriod" class="form-input" value="${escHtml(c.period||'')}" placeholder="e.g. 15-Apr-2025 to 30-Apr-2025"></div>
+    <div style="background:var(--primary-light);border-radius:10px;padding:14px;margin-bottom:16px">
+      <div class="form-label" style="margin-bottom:10px">① CASES</div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">Total Cases</label><input id="cTotal" type="number" class="form-input" value="${c.totalCases||0}" min="0"></div>
+        <div class="form-group"><label class="form-label">Counter Filed</label><input id="cFiled" type="number" class="form-input" value="${c.counterFiled||0}" min="0"></div>
+        <div class="form-group"><label class="form-label">Counter Not Filed</label><input id="cNotFiled" type="number" class="form-input" value="${c.counterNotFiled||0}" min="0"></div>
+      </div>
+    </div>
+    <div style="background:#e6f4ea;border-radius:10px;padding:14px;margin-bottom:16px">
+      <div class="form-label" style="margin-bottom:10px">② TIME-BOUND CASES</div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">Numbers</label><input id="cTBNum" type="number" class="form-input" value="${c.timeBoundCases||0}" min="0"></div>
+        <div class="form-group"><label class="form-label">Completed</label><input id="cTBComp" type="number" class="form-input" value="${c.timeBoundCompleted||0}" min="0"></div>
+        <div class="form-group"><label class="form-label">Pending</label><input id="cTBPend" type="number" class="form-input" value="${c.timeBoundPending||0}" min="0"></div>
+      </div>
+    </div>
+    <div style="background:#fce8e6;border-radius:10px;padding:14px;margin-bottom:16px">
+      <div class="form-label" style="margin-bottom:10px">③ CONTEMPT</div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">Opening Balance</label><input id="cContOpen" type="number" class="form-input" value="${c.contemptOpeningBalance||0}" min="0"></div>
+        <div class="form-group"><label class="form-label">Received (15 days)</label><input id="cContRcvd" type="number" class="form-input" value="${c.contemptReceived||0}" min="0"></div>
+        <div class="form-group"><label class="form-label">Total Contempt</label><input id="cContTotal" type="number" class="form-input" value="${c.totalContempt||0}" min="0"></div>
+      </div>
+    </div>
+    <div style="background:var(--surface-variant);border-radius:10px;padding:14px">
+      <div class="form-label" style="margin-bottom:10px">④ MAJOR 3 DEPARTMENTS</div>
+      <table style="width:100%;font-size:13px;border-collapse:collapse">
+        <thead><tr><th style="text-align:left;padding:6px 8px;color:var(--on-surface-variant);font-size:11px;text-transform:uppercase">Department</th><th style="padding:6px 8px;color:var(--on-surface-variant);font-size:11px;text-transform:uppercase">Counter</th><th style="padding:6px 8px;color:var(--on-surface-variant);font-size:11px;text-transform:uppercase">Time-Bound</th><th style="padding:6px 8px;color:var(--on-surface-variant);font-size:11px;text-transform:uppercase">Contempt</th></tr></thead>
+        <tbody>
+          ${[0,1,2].map(i=>`<tr>
+            <td style="padding:4px 6px"><select class="form-select" id="cDept${i}" style="font-size:13px;height:34px"><option value="">— Dept —</option>${depts.map(d=>`<option ${(deptRows[i].name||''===d)?'selected':''}>${escHtml(d)}</option>`).join('')}</select></td>
+            <td style="padding:4px 6px"><input type="number" class="form-input" id="cDC${i}" value="${deptRows[i].counter||0}" min="0" style="height:34px"></td>
+            <td style="padding:4px 6px"><input type="number" class="form-input" id="cDT${i}" value="${deptRows[i].timeBound||0}" min="0" style="height:34px"></td>
+            <td style="padding:4px 6px"><input type="number" class="form-input" id="cDCont${i}" value="${deptRows[i].contempt||0}" min="0" style="height:34px"></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-outlined" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-filled" onclick="saveCourtCase('${id||''}')"><span class="mi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg></span> ${id?'Save':'Create'}</button>
+  </div></div>`);
+}
+
+async function saveCourtCase(id) {
+  const period=$('cPeriod').value.trim();
+  if(!period){ snack('Period required','warn'); return; }
+  const deptBreakdown=[0,1,2].map(i=>({
+    name:document.getElementById('cDept'+i)?.value||'',
+    counter:parseInt(document.getElementById('cDC'+i)?.value||0),
+    timeBound:parseInt(document.getElementById('cDT'+i)?.value||0),
+    contempt:parseInt(document.getElementById('cDCont'+i)?.value||0),
+  })).filter(d=>d.name);
+  const data={period,totalCases:parseInt($('cTotal').value||0),counterFiled:parseInt($('cFiled').value||0),counterNotFiled:parseInt($('cNotFiled').value||0),timeBoundCases:parseInt($('cTBNum').value||0),timeBoundCompleted:parseInt($('cTBComp').value||0),timeBoundPending:parseInt($('cTBPend').value||0),contemptOpeningBalance:parseInt($('cContOpen').value||0),contemptReceived:parseInt($('cContRcvd').value||0),totalContempt:parseInt($('cContTotal').value||0),deptBreakdown,updatedAt:serverTimestamp()};
+  setSyncState('syncing');
+  try{
+    if(id){ await updateDoc(doc(db,'courtCases',id),data); snack('Updated'); }
+    else{ data.createdAt=serverTimestamp(); data.createdBy=S.user.name; await addDoc(collection(db,'courtCases'),data); snack('Court entry created'); }
+    closeModal();
+  }catch(e){ snack('Error: '+e.message,'error'); setSyncState('offline'); }
+}
 async function deleteRecord(col,id) {
   if(!confirm('Delete this record? Cannot be undone.')) return;
   setSyncState('syncing');
@@ -1963,7 +2447,7 @@ function showAbout() {
 
 // FAB
 function openAdd() {
-  const map={'do-files':()=>openDoEdit(''),'special-files':()=>openSpEdit(''),'press-atr':()=>openPrEdit(''),'meetings':()=>openMeetEdit(''),'departments':()=>openDeptEdit(''),'tags':openTagEdit};
+  const map={'do-files':()=>{ window._doPhotos=[]; openDoEdit(''); },'special-files':()=>openSpEdit(''),'press-atr':()=>openPrEdit(''),'meetings':()=>openMeetEdit(''),'departments':()=>openDeptEdit(''),'tags':openTagEdit,'court-cases':()=>openCourtEdit('')};
   (map[S.view]||(() => {}))();
 }
 
@@ -1987,7 +2471,7 @@ document.addEventListener('keydown',e=>{
 });
 
 // EXPOSE GLOBALS
-Object.assign(window,{navigate,openDoDetail,openDoEdit,saveDoFile,openSpDetail,openSpEdit,saveSpFile,openPrDetail,openPrEdit,savePrFile,openMeetDetail,openMeetEdit,saveMeeting,calNav,calDayClick,openDeptDrill,openDeptEdit,saveDept,openTagEdit,saveTag,deleteRecord,closeModal,closeSearch,doImport,S});
+Object.assign(window,{navigate,openDoDetail,openDoEdit,saveDoFile,openSpDetail,openSpEdit,saveSpFile,openPrDetail,openPrEdit,savePrFile,openMeetDetail,openMeetEdit,saveMeeting,calNav,calDayClick,openDeptDrill,openDeptEdit,saveDept,openTagEdit,saveTag,deleteRecord,closeModal,closeSearch,doImport,S,openComplianceUpdate,saveCompliance,handleDoPhotos,handleCompPhotos,removeDoPhoto,viewPhoto,renderDoPhotoGrid,openCourtEdit,saveCourtCase,setDateRange,handleSpPhotos});
 
 boot();
 
